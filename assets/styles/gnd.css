@@ -182,3 +182,7 @@ body {
     max-width: 250px;
 }
 
+.info-popup {
+    max-width: 500px;
+}
+

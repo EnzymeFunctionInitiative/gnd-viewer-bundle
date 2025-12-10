@@ -24,7 +24,7 @@ export default class GndInfoPopupController extends Controller {
         this.currentData = null;
         this.keepPopupOpen = false;
         this.canvasWidth = window.innerWidth;
-        this.diagramHeight = 150;
+        this.diagramHeight = 80;
     }
 
     disconnect() {
@@ -104,7 +104,7 @@ export default class GndInfoPopupController extends Controller {
 
         let newTop = y;
         if (newTop + popupHeight > bottomEdge) {
-            newTop = bottomEdge - popupHeight - this.diagramHeight;
+            newTop = y - popupHeight - this.diagramHeight;
         }
 
         this.element.style.left = `${newLeft}px`;
