@@ -1,0 +1,8 @@
+{
+    "name": "@efi/gnd-viewer-bundle",
+    "version": "1.0.0",
+    "description": "Genome Neighborhood Diagram Viewer",
+    "peerDependencies": {
+        "@hotwired/stimulus": "3.2.1",
+    
+}

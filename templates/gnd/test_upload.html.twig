@@ -1,0 +1,28 @@
+{% extends "efi-gnt/core.html.twig" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Test File Upload</h1>
+    
+    {# Display Flash Messages #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="card p-4 bg-light">
+        {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_label(form.attachment, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.attachment, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">
+                    {{ form_errors(form.attachment) }}
+                </div>
+            </div>
+
+            {{ form_widget(form.upload, {'attr': {'class': 'btn btn-primary'}}) }}
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

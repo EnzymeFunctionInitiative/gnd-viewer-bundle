@@ -1,0 +1,138 @@
+
+        <aside class="sidebar p-3 bg-dark text-light border-right border-black">
+            {% if uniref_id != '' %}
+            <div class="d-none">
+            {% endif %}
+                <h4><i class="bi bi-search"></i> Search</h4>
+                <div
+                    data-controller="gnd-search-form"
+                    data-action="
+                        gnd-app:finishedBatchRetrieval@window->gnd-search-form#finishedBatchRetrieval
+                        gnd-app:invalidSearch@window->gnd-search-form#invalidSearch
+                        "
+                >
+                    <form action="{{ path('api_gnd_search') }}" data-action="submit->gnd-search-form#submit" class="needs-validation">
+                        {% if base_sequence_version != 'uniprot' %}
+                            <fieldset>
+                                <div class="mb-1">
+                                    <span style="font-size:0.9em">Search ID Type:</span>
+                                    <i class="bi bi-info-circle" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="bottom" title="UniRef options decrease the number of nodes that are displayed by grouping sequences together at a 50% and/or 90% sequence percent identity, depending on job options."></i>
+                                </div>
+                                <div class="btn-group mb-3" role="group" aria-label="UniRef toggle options">
+                                    {% if base_sequence_version == 'uniref50' %}
+                                        <input type="radio" class="btn-check" name="uniref-toggle" id="uniref-toggle-uniref50" autocomplete="off" value="uniref50" {{ current_sequence_version == 'uniref50' ? 'checked' : '' }}>
+                                        <label class="btn btn-sm btn-light" for="uniref-toggle-uniref50">UniRef50</label>
+                                    {% endif %}
+                                    <input type="radio" class="btn-check" name="uniref-toggle" id="uniref-toggle-uniref90" autocomplete="off" value="uniref90" {{ current_sequence_version == 'uniref90' ? 'checked' : '' }}>
+                                    <label class="btn btn-sm btn-light" for="uniref-toggle-uniref90">UniRef90</label>
+                                    <input type="radio" class="btn-check" name="uniref-toggle" id="uniref-toggle-uniprot" autocomplete="off" value="uniprot" {{ current_sequence_version == 'uniprot' ? 'checked' : '' }}>
+                                    <label class="btn btn-sm btn-light" for="uniref-toggle-uniprot">UniProt</label>
+                                </div>
+                            </fieldset>
+                        {% endif %}
+                        <div class="mb-2">
+                            <label for="search-input" class="form-label">Input multiple clusters and/or individual sequence IDs.</label>
+                            <div class="input-group has-validation">
+                                <textarea class="form-control" id="search-input" rows="4" data-gnd-search-form-target="query" placeholder="" required></textarea>
+                                <div class="invalid-feedback">
+                                    Please enter a search term
+                                </div>
+                            </div>
+                            <div class="d-none alert alert-warning tiny-alert my-2" role="alert" data-gnd-search-form-target="searchAlert">
+                                No GNDs were found for the search term
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-sm btn-light" data-gnd-search-form-target="submitButton">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <hr>
+            {% if uniref_id != '' %}
+            </div>
+            {% endif %}
+            <h4><i class="bi bi-funnel-fill"></i> Filtering</h4>
+            <div id="gnd-filter-container"
+                data-controller="gnd-filter"
+                data-gnd-filter-gnd-svg-canvas-outlet="[data-controller='gnd-svg-canvas']"
+                data-action="
+                    gnd-svg-canvas:arrowClick@window->gnd-filter#handleArrowClick
+                    gnd-app:finishedBatchRetrieval@window->gnd-filter#finishRetrieval
+                    gnd-app:initializeApp@window->gnd-filter#initializeUi
+                    gnd-app:newDiagrams@window->gnd-filter#newDiagrams
+                    "
+            >
+                <fieldset data-gnd-filter-target="fieldset">
+                    <div>
+                        <label class="form-check-label py-1">
+                            <input class="form-check-input m-2" type="checkbox" value="" data-action="change->gnd-filter#toggleSwissProt" data-gnd-filter-target="showSwissProt">
+                            Show IDs with SwissProt
+                        </label>
+                    </div>
+                    <div id="gnd-filter-family-list" class="filter-family-list">
+                        <div class="accordion border-dark" id="familyFilterAccordion">
+                            <div class="accordion-item border-secondary">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed m-0 p-2 text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#pfamFamilyListAccordion" aria-expanded="false" aria-controls="pfamFamilyListAccordion" id="pfamFamilyListAccordionButton">
+                                        <b>Pfam Families</b>
+                                    </button>
+                                </h2>
+                                <div id="pfamFamilyListAccordion" class="accordion-collapse collapse" data-bs-parent="#familyFilterAccordion">
+                                    <div id="pfamFamilyList" class="accordion-body m-0 p-2 text-bg-dark" data-gnd-filter-target="pfamFamilyList">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-secondary">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed m-0 p-2 text-bg-dark border-top border-dark" type="button" data-bs-toggle="collapse" data-bs-target="#interproFamilyListAccordion" aria-expanded="false" aria-controls="interproFamilyListAccordion" id="interproFamilyListAccordionButton">
+                                        <b>InterPro Families</b>
+                                    </button>
+                                </h2>
+                                <div id="interproFamilyListAccordion" class="accordion-collapse collapse" data-bs-parent="#familyFilterAccordion">
+                                    <div id="interproFamilyList" class="accordion-body m-0 p-2 text-bg-dark" data-gnd-filter-target="interproFamilyList">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-2">
+                        Search families:
+                        <input type="text" data-gnd-filter-target="searchInput" class="form-input" data-action="keydown->gnd-filter#searchFilterInputBox">
+                        <button type="button" class="btn btn-dark btn-sm" data-action="click->gnd-filter#searchFilter"><i class="bi bi-search"></i></button>
+                    </div>
+                    <div class="border border-secondary rounded d-none p-1 my-1" id="family-highlight-legend" data-gnd-filter-target="legendContainer">
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-light btn-sm" data-action="click->gnd-filter#clearFilter"><i class="bi bi-x-lg"></i> Reset Filters</button>
+                    </div>
+                </fieldset>
+            </div>
+            <hr>
+            <h4><i class="bi bi-arrows-fullscreen"></i> Genome Window</h4>
+            <div id="gnd-window-container"
+                data-controller="gnd-gene-window"
+                data-action="
+                    gnd-app:initializeApp@window->gnd-gene-window#initializeApp
+                    "
+            >
+                <div class="my-1">
+                    Window size: <select class="w-auto mx-2" id="gnd-window-size" data-gnd-gene-window-target="windowSize" data-action="change->gnd-gene-window#windowSizeChange"><option>10</option><option>11</option></select> genes <i class="bi bi-info-circle" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="The number of genes to display on either side of the query gene"></i>
+                </div>
+                {#
+                <div class="my-2">
+                    <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (large)" data-gnd-gene-window-target="zoomOutLarge" data-action="click->gnd-gene-window#zoomOutLarge"><i class="bi bi-zoom-out"></i></button>
+                    <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (small)" data-gnd-gene-window-target="zoomOutSmall" data-action="click->gnd-gene-window#zoomOutSmall"><i class="bi bi-zoom-out"></i></button>
+                    <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (small)" data-gnd-gene-window-target="zoomInSmall" data-action="click->gnd-gene-window#zoomInSmall"><i class="bi bi-zoom-in"></i></button>
+                    <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (large)" data-gnd-gene-window-target="zoomInLarge" data-action="click->gnd-gene-window#zoomInLarge"><i class="bi bi-zoom-in"></i></button>
+                </div>
+                #}
+                <div class="my-2 lh-1">
+                    <small>Use of any of these inputs will cause the page to reload.</small>
+                </div>
+            </div>
+            <hr>
+            <h4><i class="bi bi-wrench"></i> Tools</h4>
+            <div class="my-3">
+            </div>
+        </aside>
+
