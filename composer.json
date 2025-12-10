@@ -1,0 +1,40 @@
+{
+    "name": "efi/gnd-viewer-bundle",
+    "description": "EFI GND Viewer bundle",
+    "type": "symfony-bundle",
+    "license": "GPL-3.0-only",
+    "autoload": {
+        "psr-4": {
+            "Efi\\GndViewerBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nils Oberg",
+            "email": "noberg@illinois.edu"
+        }
+    ],
+    "require": {
+        "efi/gnd": "@dev",
+        "php": ">=8.2"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/home/n-z/noberg/dev/efi-gnd"
+        },
+        {
+            "type": "path",
+            "url": "/var/www/efi-web2/dev/gnd-viewer-bundle"
+        }
+    ],
+    "config": {
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
+        }
+    }
+}

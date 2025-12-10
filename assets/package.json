@@ -1,0 +1,61 @@
+{
+    "name": "@efi/gnd-viewer-bundle",
+    "symfony": {
+        "controllers": {
+            "gnd_app": {
+                "main": "js/gnd_app_controller.js",
+                "fetch": "eager",
+                "enabled": true,
+                "autoimport": {
+                    "@efi/gnd-viewer-bundle/styles/gnd.css": true
+                }
+            },
+            "gnd_single_gnd": {
+                "main": "js/gnd_single_gnd_controller.js",
+                "fetch": "eager",
+                "enabled": true,
+                "autoimport": {
+                    "@efi/gnd-viewer-bundle/styles/gnd.css": true
+                }
+            },
+            "gnd_filter": {
+                "main": "js/gnd_filter_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "gnd_gene_window": {
+                "main": "js/gnd_gene_window_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "gnd_info_popup": {
+                "main": "js/gnd_info_popup_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "gnd_loading": {
+                "main": "js/gnd_loading_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "gnd_search_form": {
+                "main": "js/gnd_search_form_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "gnd_svg_canvas": {
+                "main": "js/gnd_svg_canvas_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "3.2.1",
+            "bootstrap": "5.3.7"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "3.2.1",
+        "bootstrap": "5.3.7"
+    }
+}
