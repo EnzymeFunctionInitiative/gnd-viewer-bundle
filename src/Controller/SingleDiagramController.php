@@ -3,8 +3,7 @@
 namespace Efi\GndViewerBundle\Controller;
 
 use Efi\Gnd\SingleGndMySqlRetrieval;
-use Efi\Gnd\Dto\SingleGndMySqlRetrievalParams;
-use Efi\GndViewerBundle\GndViewerService;
+use Efi\GndViewerBundle\Service\DatabaseService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SingleDiagramController extends AbstractController
 {
     public function __construct(
-        private readonly GndViewerService $gndService,
+        private readonly DatabaseService $databaseService,
     )
     {
     }
@@ -25,14 +24,7 @@ class SingleDiagramController extends AbstractController
         Request $request,
     ): Response
     {
-        $params = new SingleGndMySqlRetrievalParams(
-            '***REMOVED***',
-            'efi_202506',
-            '***REMOVED***',
-            '***REMOVED***',
-        );
-
-        $gnd = new SingleGndMySqlRetrieval($params);
+        $gnd = new SingleGndMySqlRetrieval($this->databaseService->getConnection());
 
         $results = ['data' => [$gnd->getNeighborhoodData($id)]];
 
