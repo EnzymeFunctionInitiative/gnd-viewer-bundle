@@ -11,16 +11,18 @@
     <div class="d-flex align-items-center border-bottom">
         <span class="px-2 py-1 mr-5" data-efi--gnd-viewer-bundle--gnd-info-popup-target="idDisplay"></span>
         <div class="d-flex ms-auto">
-            <button
-                    data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#openMetadataPage"
-                    class="btn btn-link border-0"
-                    aria-label="Metadata Tool"
-                    data-controller="tooltip"
-                    data-bs-toggle="tooltip"
-                    data-placement="top"
-                    title="View metadata">
-                <i class="bi bi-box-arrow-up-right"></i>
-            </button>
+            {% if show_metadata_button|default(true) %}
+                <button
+                        data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#openMetadataPage"
+                        class="btn btn-link border-0"
+                        aria-label="Metadata Tool"
+                        data-controller="tooltip"
+                        data-bs-toggle="tooltip"
+                        data-placement="top"
+                        title="View metadata">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </button>
+            {% endif %}
             <button
                     data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#copyToClipboard"
                     class="btn btn-link border-0"
@@ -36,6 +38,7 @@
     <div class="p-2">
         <div>Description: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="description"></span></div>
         <div>Annotation Status: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="status"></span></div>
+        <div>Organism: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="organism"></span></div>
         <div class="info-popup-group">
             <div class=""><b>Pfam</b></div>
             <div><span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="pfam"></span></div>
