@@ -39,20 +39,26 @@ export default class GndSingleGndController extends Controller {
 
     handleArrowClick(event) {
         const data = this.getFromDataStore(event.params.id);
-        const x = event.clientX + 10;
-        const y = event.clientY + 10;
+        const { x, y } = this.getArrowPosition(event.currentTarget);
         const dispatchData = { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: x, y: y };
         this.dispatch('arrowClick', { detail: dispatchData, openPopup: true, bubbles: true });
     }
 
     handleArrowMouseOver(event) {
         const data = this.getFromDataStore(event.params.id);
-        const x = event.clientX + 1;
-        const y = event.clientY + 1;
+        const { x, y } = this.getArrowPosition(event.currentTarget);
         this.dispatch('arrowMouseOver', { detail: { data, x: x, y: y }, bubbles: true });
     }
 
     handleArrowMouseOut(event) {
         this.dispatch('arrowMouseOut', { detail: {}, bubbles: true });
+    }
+
+    getArrowPosition(targetArrow) {
+        const popupPos = this.renderer.computeInfoPopupPosition(targetArrow);
+        const svgPos = this.element.getBoundingClientRect();
+        const x = popupPos.x + svgPos.left;
+        const y = popupPos.y + svgPos.top + window.scrollY;
+        return { x, y };
     }
 }

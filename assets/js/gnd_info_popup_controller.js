@@ -6,14 +6,15 @@ export default class GndInfoPopupController extends Controller {
     };
 
     static targets = [
-        'idDisplay',
-        'metadataLink',
         'description',
-        'status',
-        'pfam',
-        'interproGroup',
+        'idDisplay',
         'interpro',
+        'interproGroup',
         'length',
+        'metadataLink',
+        'organism',
+        'pfam',
+        'status',
     ];
 
     connect() {
@@ -23,6 +24,7 @@ export default class GndInfoPopupController extends Controller {
         this.currentData = null;
         this.keepPopupOpen = false;
         this.canvasWidth = window.innerWidth;
+        this.diagramHeight = 150;
     }
 
     disconnect() {
@@ -69,16 +71,19 @@ export default class GndInfoPopupController extends Controller {
         this.interproTarget.innerText = data.InterProMerged;
         this.descriptionTarget.innerText = data.Description;
         this.lengthTarget.innerText = data.SequenceLength;
+        this.organismTarget.innerText = data.Organism;
         this.statusTarget.innerText = data.IsSwissProt ? 'SwissProt' : 'TrEMBL';
     }
 
 	setPosition(x, y) {
-        const offsetX = 15;
+        const offsetX = 25;
 
         const popupWidth = this.element.offsetWidth;
+        const popupHeight = this.element.offsetHeight;
         
         // Calculate the coordinates of the viewport edges relative to the document
         const rightEdge = this.canvasWidth - window.scrollX;
+        const bottomEdge = window.scrollY + window.innerHeight;
 
         // Calculate preferred horizontal position
         let newLeft = x + offsetX;
@@ -97,8 +102,13 @@ export default class GndInfoPopupController extends Controller {
             newLeft = offsetX;
         }
 
+        let newTop = y;
+        if (newTop + popupHeight > bottomEdge) {
+            newTop = bottomEdge - popupHeight - this.diagramHeight;
+        }
+
         this.element.style.left = `${newLeft}px`;
-        this.element.style.top = `${y}px`;
+        this.element.style.top = `${newTop}px`;
 	}
 
     openMetadataPage() {
