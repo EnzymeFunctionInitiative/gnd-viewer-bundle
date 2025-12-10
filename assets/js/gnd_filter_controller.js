@@ -15,7 +15,6 @@ export default class GndFilterController extends Controller {
     highlightedFamilyIds = new Set();
 
     connect() {
-        console.log('Filter Controller Connected');
         this.pfamAccordion = document.getElementById('pfamFamilyListAccordion');
         this.pfamAccordionButton = document.getElementById('pfamFamilyListAccordionButton');
         this.interproAccordion = document.getElementById('interproFamilyListAccordion');

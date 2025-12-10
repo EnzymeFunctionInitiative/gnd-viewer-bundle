@@ -92,7 +92,6 @@ export default class GndDataset {
         params.set('key', this.jobKey);
         params.set('window', this.windowSize);
         this.addQueryToParams(params);
-        console.log(params);
 
         if (this.requestedSequenceVersion !== 'uniprot') {
             params.set('seq-ver', this.requestedSequenceVersion);
@@ -109,7 +108,6 @@ export default class GndDataset {
         }
 
         this.metadata = await response.json();
-        console.log(this.metadata);
 
         const totalRecords = this.metadata.extent.stats.total_records;
         this.scaleFactor = this.metadata.extent.stats.scale_factor ?? Constants.UNSPECIFIED;
