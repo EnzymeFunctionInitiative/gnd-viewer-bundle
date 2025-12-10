@@ -5,11 +5,6 @@ export default class GndInfoPopupController extends Controller {
         metadataUrl: String
     };
 
-    static outlets = [
-        'gnd-app',
-        'gnd-single-gnd',
-    ];
-
     static targets = [
         'idDisplay',
         'metadataLink',
@@ -21,19 +16,13 @@ export default class GndInfoPopupController extends Controller {
         'length',
     ];
 
-    // With the outlet, we now have:
-    // this.gndAppOutlet - a reference to the gnd app controller
-    // this.hasGndAppOutlet - boolean indicating if there is a connection to the gnd app controller
-    // this.gndAppOutletConnected() - callback when the outlet is connected between controllers
-
     connect() {
-        this.canvasWidth = this.getContextController()?.getCanvasWidth();
-
         // Use this to keep popups from showing up too fast; i.e. only show when the mouse
         // hovers for a short period of time rather than when the user moves the mouse across the screen
         this.timeoutId = null;
         this.currentData = null;
         this.keepPopupOpen = false;
+        this.canvasWidth = window.innerWidth;
     }
 
     disconnect() {
@@ -42,29 +31,14 @@ export default class GndInfoPopupController extends Controller {
         }
     }
 
-    getContextController() {
-        if (this.hasGndAppOutlet) return this.gndAppOutlet;
-        if (this.hasGndSingleGndOutlet) return this.gndSingleGndOutlet;
-        return null;
-    }
-
-    getFromDataStore(arrowId) {
-        return this.getContextController()?.getFromDataStore(arrowId);
-    }
-
-    handleArrowOver({ detail: { arrowId, x, y } }) {
+    handleArrowOver({ detail: { data, x, y } }) {
         if (typeof this.timeoutId === 'number') {
             clearTimeout(this.timeoutId);
         }
 
         this.timeoutId = setTimeout(() => {
-            const data = this.getFromDataStore(arrowId);
-            if (data) {
-    			this.populatePopup(data);
-            }
-
+            this.populatePopup(data);
             this.element.classList.remove('d-none');
-
             this.setPosition(x, y);
             this.keepPopupOpen = false;
         }, 100);
@@ -80,26 +54,19 @@ export default class GndInfoPopupController extends Controller {
         this.element.classList.add('d-none');
     }
 
-    handleArrowClick({ detail: { arrowId, ctrlKey, altKey, x, y }}) {
-        const data = this.getFromDataStore(arrowId);
-
+    handleArrowClick({ detail: { data, ctrlKey, altKey, x, y }}) {
         if (!ctrlKey && !altKey) {
-            if (data) {
-                this.keepPopupOpen = true;
-		    	this.populatePopup(data);
-		    	this.setPosition(x, y);
-                this.currentData = data;
-            } else {
-                this.keepPopupOpen = false;
-                //TODO: handle this error
-            }
+            this.keepPopupOpen = true;
+		    this.populatePopup(data);
+		    this.setPosition(x, y);
+            this.currentData = data;
         }
     }
 
     populatePopup(data) {
         this.idDisplayTarget.innerText = data.Id;
         this.pfamTarget.innerText = data.PfamMerged;
-        this.interProTarget.innerText = data.InterProMerged;
+        this.interproTarget.innerText = data.InterProMerged;
         this.descriptionTarget.innerText = data.Description;
         this.lengthTarget.innerText = data.SequenceLength;
         this.statusTarget.innerText = data.IsSwissProt ? 'SwissProt' : 'TrEMBL';
