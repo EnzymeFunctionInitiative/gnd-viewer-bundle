@@ -9,54 +9,5 @@
              data-efi--gnd-viewer-bundle--gnd-single-gnd-stats-value="{{ diagram_stats|json_encode|e('html_attr') }}"
         ></svg>
     </div>
-    <div class="position-absolute p-0 border border-secondary rounded border-2 bg-light d-none w-50"
-        data-controller="efi--gnd-viewer-bundle--gnd-info-popup"
-        data-efi--gnd-viewer-bundle--gnd-info-popup-metadata-url-value="{{ metadata_url|default }}"
-        data-efi--gnd-viewer-bundle--gnd-info-popup-efi--gnd-viewer-bundle--gnd-single-gnd-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-single-gnd']"
-        data-action="
-            efi--gnd-viewer-bundle--gnd-single-gnd:arrowClick@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowClick
-            efi--gnd-viewer-bundle--gnd-single-gnd:arrowMouseOver@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOver
-            efi--gnd-viewer-bundle--gnd-single-gnd:arrowMouseOut@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOut
-            "
-    >
-        <div class="d-flex align-items-center border-bottom">
-            <span class="px-2 py-1 mr-5" data-efi--gnd-viewer-bundle--gnd-info-popup-target="idDisplay"></span>
-            <div class="d-flex ms-auto">
-                <button
-                        data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#openMetadataPage"
-                        class="btn btn-link border-0"
-                        aria-label="Metadata Tool"
-                        data-controller="tooltip"
-                        data-bs-toggle="tooltip"
-                        data-placement="top"
-                        title="View metadata">
-                    <i class="bi bi-box-arrow-up-right"></i>
-                </button>
-                <button
-                        data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#copyToClipboard"
-                        class="btn btn-link border-0"
-                        aria-label="Copy to clipboard"
-                        data-controller="tooltip"
-                        data-bs-toggle="tooltip"
-                        data-placement="top"
-                        title="Copy to clipboard">
-                    <i class="bi bi-clipboard"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-2">
-            <div>Description: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="description"></span></div>
-            <div>Annotation Status: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="status"></span></div>
-            <div class="info-popup-group">
-                <div class=""><b>Pfam</b></div>
-                <div><span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="pfam"></span></div>
-            </div>
-            <div class="info-popup-group" data-efi--gnd-viewer-bundle--gnd-info-popup-target="interproGroup">
-                <div class=""><b>InterPro</b></div>
-                <div><span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="interpro"></span></div>
-            </div>
-            <div class="info-popup-group">Sequence Length: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="length"></span></div>
-        </div>
-    </div>
 </div>
 

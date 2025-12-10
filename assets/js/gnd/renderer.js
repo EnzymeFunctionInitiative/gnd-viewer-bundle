@@ -14,8 +14,9 @@ export default class GndRenderer {
     // for Pfam families.
     familyArrowMap = new Map();
 
-    constructor(svgElement) {
+    constructor(svgElement, mouseActionClass = 'gnd-svg-canvas') {
         this.element = svgElement;
+        this.mouseActionClass = mouseActionClass;
 
         this.snap = Snap(this.element);
 
@@ -46,7 +47,7 @@ export default class GndRenderer {
         if (this.snap) {
             this.snap.clear();
         }
-        this.snap.attr({ preserveAspectRatio: "xMinYMin meet" });
+        this.snap.attr({ preserveAspectRatio: 'xMinYMin meet' });
         this.element.style.height = `${this.DIAGRAM_HEIGHT}px`;
     }
 
@@ -282,11 +283,13 @@ export default class GndRenderer {
         // Create group to hold the arrow and sub-arrows
         const arrowGroup = diagramGroup.g();
 
-        arrowGroup.attr({
+        const attr = {
             class: "an-arrow-group",
-            "data-gnd-svg-canvas-id-param": arrowData.Id,
-            "data-action": "click->gnd-svg-canvas#handleArrowClick mouseover->gnd-svg-canvas#handleArrowMouseOver mouseout->gnd-svg-canvas#handleArrowMouseOut",
-        });
+            "data-action": `click->${this.mouseActionClass}#handleArrowClick mouseover->${this.mouseActionClass}#handleArrowMouseOver mouseout->${this.mouseActionClass}#handleArrowMouseOut`,
+        };
+        attr[`data-${this.mouseActionClass}-id-param`] = arrowData.Id;
+        arrowGroup.attr(attr);
+
 
         const svgAttr = this.getSvgAttr(arrowData, isQuery);
 

@@ -12,7 +12,7 @@ export default class GndSingleGndController extends Controller {
     connect() {
         const colorService = new GndColor();
         this.diagramStore = new GndDiagramStore(colorService);
-        this.renderer = new GndRenderer(this.element, 'gnd-single-gnd');
+        this.renderer = new GndRenderer(this.element, 'efi--gnd-viewer-bundle--gnd-single-gnd');
 
         const drawables = this.diagramStore.updateStore(this.dataValue);
 
@@ -38,23 +38,21 @@ export default class GndSingleGndController extends Controller {
     // --- EVENT HANDLERS & DISPATCHERS ---
 
     handleArrowClick(event) {
-        const arrowId = event.params.id;
-
+        const data = this.getFromDataStore(event.params.id);
         const x = event.clientX + 10;
         const y = event.clientY + 10;
-        const dispatchData = { detail: { arrowId: arrowId, ctrlKey: event.ctrlKey, altKey: event.altKey, x: x, y: y }, openPopup: true };
-
-        this.dispatch('arrowClick', dispatchData);
+        const dispatchData = { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: x, y: y };
+        this.dispatch('arrowClick', { detail: dispatchData, openPopup: true, bubbles: true });
     }
 
     handleArrowMouseOver(event) {
-        const arrowId = event.params.id;
+        const data = this.getFromDataStore(event.params.id);
         const x = event.clientX + 1;
         const y = event.clientY + 1;
-        this.dispatch('arrowMouseOver', { detail: { arrowId, x: x, y: y } });
+        this.dispatch('arrowMouseOver', { detail: { data, x: x, y: y }, bubbles: true });
     }
 
     handleArrowMouseOut(event) {
-        this.dispatch('arrowMouseOut');
+        this.dispatch('arrowMouseOut', { detail: {}, bubbles: true });
     }
 }
