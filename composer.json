@@ -21,11 +21,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "/home/n-z/noberg/dev/efi-gnd"
-        },
-        {
-            "type": "path",
-            "url": "/var/www/efi-web2/dev/gnd-viewer-bundle"
+            "url": "***REMOVED***"
         }
     ],
     "config": {

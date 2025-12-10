@@ -9,7 +9,6 @@ export default class GndGeneWindowController extends Controller {
     static targets = ['windowSize'];
 
     connect() {
-        console.log('Window Controller Connected');
         this.windowSize = Constants.DEFAULT_WINDOW_SIZE;
         this.setupWindowSizeOptions();
     }
