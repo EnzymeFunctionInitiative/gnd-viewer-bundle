@@ -41,6 +41,6 @@ class SingleDiagramController extends AbstractController
             'diagram_json' => $results,
         ];
 
-        return $this->render('@EfiGndViewer/test_single_gnd.html.twig', $viewData);
+        return $this->render('@EfiGndViewer/single_gnd_fragment.html.twig', $viewData);
     }
 }
