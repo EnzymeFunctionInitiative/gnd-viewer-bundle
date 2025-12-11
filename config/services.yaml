@@ -1,9 +1,3 @@
-parameters:
-    app.database_user: '%env(DATABASE_USER)%'
-    app.database_password: '%env(DATABASE_PASSWORD)%'
-    app.database_name: '%env(DATABASE_NAME)%'
-    app.database_host: '%env(DATABASE_HOST)%'
-    app.gnd_window: 20
 
 services:
     _defaults:
@@ -15,3 +9,15 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
+
+    Efi\Gnd\SingleGndMySqlRetrieval:
+        arguments:
+            - '@efi_gnd.database_connection'
+
+    Efi\Gnd\Interface\GndDatabaseServiceInterface: '@Efi\Gnd\SingleGndMySqlRetrieval'
+
+    Efi\GndViewerBundle\Controller\SingleDiagramController:
+        tags: ['controller.service_arguments']
+        arguments:
+            $databaseService: '@Efi\Gnd\Interface\GndDatabaseServiceInterface'
+
