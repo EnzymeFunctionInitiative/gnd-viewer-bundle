@@ -2,8 +2,8 @@
 
 namespace Efi\GndViewerBundle\Controller;
 
-use Efi\Gnd\SingleGndMySqlRetrieval;
-use Efi\GndViewerBundle\Service\DatabaseService;
+use Efi\Gnd\Interface\GndDatabaseServiceInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,19 +14,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class SingleDiagramController extends AbstractController
 {
     public function __construct(
-        private readonly DatabaseService $databaseService,
+        private readonly LoggerInterface $logger,
+        private readonly GndDatabaseServiceInterface $databaseService,
     )
     {
     }
 
     public function index(
         string $id,
-        Request $request,
+        ?int $windowSize,
     ): Response
     {
-        $gnd = new SingleGndMySqlRetrieval($this->databaseService->getConnection());
+        if (!$windowSize)
+            $windowSize = \Efi\Gnd\Util\GndConstants::DEFAULT_WINDOW_SIZE;
 
-        $results = ['data' => [$gnd->getNeighborhoodData($id)]];
+        $data = $this->databaseService->getNeighborhoodData($id, $windowSize);
+        $results = ['data' => [$data]];
 
         $viewData = [
             'diagram_stats' => [],
