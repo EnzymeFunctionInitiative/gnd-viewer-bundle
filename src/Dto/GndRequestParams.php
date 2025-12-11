@@ -1,6 +1,6 @@
 <?php
 
-namespace Efi\GndViewerBundle;
+namespace Efi\GndViewerBundle\Dto;
 
 use Efi\Gnd\Dto\GndQueryParams;
 use Efi\Gnd\Enum\SequenceVersion;
