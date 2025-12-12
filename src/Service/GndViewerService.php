@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class GndViewerService
 {
     public function __construct(
-        private readonly GndReaderInterface $gndReader,
+        private readonly ?GndReaderInterface $gndReader,
     )
 	{
     }

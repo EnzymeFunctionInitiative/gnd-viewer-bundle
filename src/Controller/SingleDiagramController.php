@@ -2,7 +2,7 @@
 
 namespace Efi\GndViewerBundle\Controller;
 
-use Efi\Gnd\Interface\SingleGndDatabaseServiceInterface;
+use Efi\Gnd\Interface\SingleGndServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +15,7 @@ class SingleDiagramController extends AbstractController
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly SingleGndDatabaseServiceInterface $databaseService,
+        private readonly SingleGndServiceInterface $databaseService,
     )
     {
     }
