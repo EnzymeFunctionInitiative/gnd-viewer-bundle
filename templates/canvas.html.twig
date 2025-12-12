@@ -1,0 +1,19 @@
+
+<main class="main-content bg-white">
+    <div id="error-overlay" class="d-none">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+
+    <div class="gnd-svg-pane">
+        <svg width="100%" height="400" preserveAspectRation="xMinYMin"
+        	data-controller="efi--gnd-viewer-bundle--gnd-svg-canvas"
+            data-action="
+                efi--gnd-viewer-bundle--gnd-app:initializeApp@window->efi--gnd-viewer-bundle--gnd-svg-canvas#initializeCanvas
+                efi--gnd-viewer-bundle--gnd-app:newDiagrams@window->efi--gnd-viewer-bundle--gnd-svg-canvas#renderBatch
+                efi--gnd-viewer-bundle--gnd-app:finishedBatchRetrieval@window->efi--gnd-viewer-bundle--gnd-svg-canvas#finalizeRender
+                "
+        >
+        </svg>
+    </div>
+</main>
+

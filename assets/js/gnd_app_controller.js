@@ -48,19 +48,21 @@ export default class GndAppController extends Controller {
     ];
 
     static values = {
-        gndBatchSize: Number,
-        gndSetSize: Number,
-        metadataApiUrl: String,
-        recordApiUrl: String,
-        jobId: Number,
-        jobKey: String,
-        databaseSequenceVersion: String,
-        requestedSequenceVersion: String,
-        requestedUnirefId: String,
-        searchClusterOnLoad: String,
+        appConfig: { type: Object, default: {} },
     };
 
-    static outlets = ['gnd-gene-window', 'gnd-search-form'];
+    //data-efi--gnd-viewer-bundle--gnd-app-gnd-batch-size-value="{{ gnd_batch_size }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-gnd-set-size-value="{{ gnd_set_size }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-metadata-api-url-value="{{ path('api_gnd_search') }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-record-api-url-value="{{ path('api_gnd_record') }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-job-id-value="{{ job_id }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-job-key-value="{{ job_key }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-database-sequence-version-value="{{ base_sequence_version|default("") }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-requested-sequence-version-value="{{ current_sequence_version|default("") }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-requested-uniref-id-value="{{ uniref_id }}"
+    //data-efi--gnd-viewer-bundle--gnd-app-search-cluster-on-load-value="{{ search_cluster_on_load|default("") }}"
+
+    static outlets = ['efi--gnd-viewer-bundle--gnd-gene-window', 'efi--gnd-viewer-bundle--gnd-search-form'];
 
     dataset = null;
 
@@ -74,16 +76,29 @@ export default class GndAppController extends Controller {
         this.diagramStore = new GndDiagramStore(this.colorService);
         this.numGndsRetrieved = 0;
         this.numBatchesRetrieved = 0;
-        this.databaseSequenceVersion = this.getDatabaseSequenceVersion();
-        this.databaseSequenceVersionLabel = document.getElementById('base-sequence-version');
+
+        this.config = this.parseOptions(this.appConfigValue);
+    }
+
+    parseOptions(options) {
+        const config = {
+            ...options,
+            api: { ...options.api },
+            sequence: { ...options.sequence },
+            search: { ...options.search }
+        };
+        const seqVersion = this.getDatabaseSequenceVersion(options.sequence.databaseVersion);
+        config.sequence.databaseVersion = seqVersion;
+        config.sequence.versionLabel = document.getElementById('base-sequence-version');
+        return config;
     }
 
     disconnect() {
     }
 
     // Wait until the gene window controller is connected before doing an automatic search
-    gndGeneWindowOutletConnected() {
-        if (!this.requestedUnirefIdValue.length && !this.searchClusterOnLoadValue)
+    efiGndViewerBundleGndGeneWindowOutletConnected() {
+        if (!this.config.sequence.unirefId.length && !this.config.search.clusterOnLoad)
             return;
 
         const retrievalParams = this.getDefaultRetrievalParams();
@@ -129,20 +144,22 @@ export default class GndAppController extends Controller {
 
         await this.performSearch(retrievalParams);
 
-        if (this.databaseSequenceVersion !== Constants.UNIPROT && this.databaseSequenceVersionLabel) {
+        if (this.config.sequence.databaseVersion !== Constants.UNIPROT) {
             let versionLabel = 'UniProt';
             if (sequenceVersion === Constants.UNIREF50) {
                 versionLabel = 'UniRef50';
             } else if (sequenceVersion === Constants.UNIREF90) {
                 versionLabel = 'UniRef90';
             }
-            this.databaseSequenceVersionLabel.innerHTML = `(${versionLabel} IDs)`;
+            if (this.config.sequence.versionLabel) {
+                this.config.sequence.versionLabel.innerHTML = `(${versionLabel} IDs)`;
+            }
         }
     }
 
     async performSearch(retrievalParams) {
         // Dataset is used to perform actual retrieval and parsing
-        this.dataset = new GndDataset(this.metadataApiUrlValue, this.recordApiUrlValue, this.jobIdValue, this.jobKeyValue, retrievalParams);
+        this.dataset = new GndDataset(this.config.api.metadata, this.config.api.record, this.config.jobId, this.config.jobKey, retrievalParams);
 
         this.enterLoadingState();
 
@@ -208,7 +225,7 @@ export default class GndAppController extends Controller {
      */
     getRetrievalBatchSize() {
         if (this.numBatchesRetrieved === 0) {
-            return this.gndBatchSizeValue;
+            return this.config.batchSize;
         } else {
             return this.numBatchesRetrieved;
         }
@@ -279,36 +296,36 @@ export default class GndAppController extends Controller {
     // ----- Helpers -----
 
     getWindowSize() {
-        return this.gndGeneWindowOutlet.getWindowSize();
+        return this.efiGndViewerBundleGndGeneWindowOutlet.getWindowSize();
     }
 
-    getDatabaseSequenceVersion() {
-        if (this.databaseSequenceVersionValue === 'uniref90') {
-            return Constants.UNIREF90;
-        } else if (this.databaseSequenceVersionValue === 'uniref50') {
-            return Constants.UNIREF50;
-        } else {
-            return Constants.UNIPROT;
+    getDatabaseSequenceVersion(databaseVersion) {
+        let seqVersion = Constants.UNIPROT;
+        if (databaseVersion === 'uniref90') {
+            seqVersion = Constants.UNIREF90;
+        } else if (databaseVersion === 'uniref50') {
+            seqVersion = Constants.UNIREF50;
         }
+        return seqVersion;
     }
 
     updateRetrievalParamsQuery(retrievalParams) {
-        if (this.requestedUnirefIdValue.length > 0) {
-            retrievalParams.requestedUnirefId = this.requestedUnirefIdValue;
+        if (this.config.sequence.unirefId.length > 0) {
+            retrievalParams.requestedUnirefId = this.config.sequence.unirefId;
         }
-        if (this.searchClusterOnLoadValue) {
-            retrievalParams.query = this.searchClusterOnLoadValue;
+        if (this.config.search.clusterOnLoad) {
+            retrievalParams.query = this.config.search.clusterOnLoad;
         }
-        const seqVersion = this.gndSearchFormOutlet.getSequenceVersion();
+        const seqVersion = this.efiGndViewerBundleGndSearchFormOutlet.getSequenceVersion();
         retrievalParams.requestedSequenceVersion = seqVersion;
     }
 
     getDefaultRetrievalParams() {
         const retrievalParams = {
             windowSize: this.getWindowSize(),
-            setSize: this.gndSetSizeValue,
+            setSize: this.config.setSize,
             batchSize: this.getRetrievalBatchSize(),
-            databaseSequenceVersion: this.databaseSequenceVersion,
+            databaseSequenceVersion: this.config.sequence.databaseVersion,
         };
         return retrievalParams;
     }
@@ -328,7 +345,7 @@ export default class GndAppController extends Controller {
     }
 
     handleSuccess() {
-        let seqVersion = this.gndSearchFormOutlet.getSequenceVersion();
+        let seqVersion = this.efiGndViewerBundleGndSearchFormOutlet.getSequenceVersion();
         seqVersion = (seqVersion === Constants.UNIREF50 ? 'UniRef50' : (seqVersion === Constants.UNIREF90 ? 'UniRef90' : 'UniProt'));
         this.handleFooterUpdate(`Showing ${this.numGndsRetrieved} of ${this.totalRecords} ${seqVersion} diagrams`, ['text-danger'], 'text-muted');
     }

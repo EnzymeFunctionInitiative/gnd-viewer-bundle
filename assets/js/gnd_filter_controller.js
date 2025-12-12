@@ -3,7 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 export default class GndFilterController extends Controller {
     static targets = ['pfamFamilyList', 'interproFamilyList', 'searchInput', 'showSwissProt', 'fieldset', 'checkbox', 'legendContainer'];
 
-    static outlets = ['gnd-svg-canvas'];
+    static outlets = ['efi--gnd-viewer-bundle--gnd-svg-canvas'];
 
     // Map family ID to description
     familyNameMap = new Map();
@@ -81,7 +81,7 @@ export default class GndFilterController extends Controller {
     }
 
     toggleSwissProt(event) {
-        this.gndSvgCanvasOutlet.toggleSwissProts(event.target.checked);
+        this.efiGndViewerBundleGndSvgCanvasOutlet.toggleSwissProts(event.target.checked);
     }
 
     /**
@@ -112,7 +112,7 @@ export default class GndFilterController extends Controller {
     clearFilter(event, clearSearchQuery = true) {
         this.checkboxTargets.forEach(checkbox => checkbox.checked = false);
         this.showSwissProtTarget.checked = false;
-        this.gndSvgCanvasOutlet.clearAllHighlights();
+        this.efiGndViewerBundleGndSvgCanvasOutlet.clearAllHighlights();
         this.highlightedFamilyIds.clear();
         this.resetFamilySearch();
         this.resetFamilyCheckboxes();
@@ -237,7 +237,7 @@ export default class GndFilterController extends Controller {
             const legendItem = document.createElement('div');
             legendItem.className = 'family-legend-item';
             legendItem.innerHTML = `
-                <span class="family-legend-item-color" style="background-color: ${itemData.color}" data-action="click->gnd-filter#clearLegendItem"><i class="bi bi-x" data-family-id="${itemData.familyId}"></i></span>
+                <span class="family-legend-item-color" style="background-color: ${itemData.color}" data-action="click->efi--gnd-viewer-bundle--gnd-filter#clearLegendItem"><i class="bi bi-x" data-family-id="${itemData.familyId}"></i></span>
                 <span class="family-legend-item-name">${itemData.familyName}</span>
             `;
             this.legendContainerTarget.appendChild(legendItem);
@@ -270,7 +270,7 @@ export default class GndFilterController extends Controller {
         div.className = 'form-check filter-item';
         div.innerHTML = `
             <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" value="${familyId}" id="fam-${familyId}" data-action="change->gnd-filter#handleFamilyToggle" data-gnd-filter-target="checkbox" data-family-id="${familyId}" data-family-name="${familyName}">
+                <input class="form-check-input" type="checkbox" value="${familyId}" id="fam-${familyId}" data-action="change->efi--gnd-viewer-bundle--gnd-filter#handleFamilyToggle" data-efi--gnd-viewer-bundle--gnd-filter-target="checkbox" data-family-id="${familyId}" data-family-name="${familyName}">
                 ${familyName}
             </label>
         `;
@@ -295,7 +295,7 @@ export default class GndFilterController extends Controller {
      * Calls the svg canvas controller and updates the legend.
      */
     toggleFamily(familyId, isChecked) {
-        this.gndSvgCanvasOutlet.toggleFamily(familyId, isChecked);
+        this.efiGndViewerBundleGndSvgCanvasOutlet.toggleFamily(familyId, isChecked);
         this.updateLegendFamilyIds(familyId, isChecked);
         this.updateLegend();
     }
