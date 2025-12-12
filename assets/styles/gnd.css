@@ -12,19 +12,6 @@ body {
     padding-bottom: var(--footer-height);
 }
 
-#loading-spinner {
-    position: fixed; /* Cover the entire screen */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-    z-index: 9999; /* Ensure it's on top of everything */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 /* Fixed Sidebar Styling */
 .sidebar {
     position: fixed;
