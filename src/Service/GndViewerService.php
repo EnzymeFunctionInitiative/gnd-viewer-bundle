@@ -26,10 +26,9 @@ final class GndViewerService
 
     /**
      * Returns GND metadata such as job name, cooccurrence, neighborhood size and sequence version.
-     * @param {string} $dsn - the DSN of the GND database
      * @return {array} array of string key-values
      */
-    public function getMetadata(string $dsn): GndMetadata
+    public function getMetadata(): GndMetadata
     {
         $metadata = $this->gndReader->getMetadata();
         return $metadata;
@@ -39,7 +38,7 @@ final class GndViewerService
      * Initial call for search query to obtain stats on the cluster/query, such as the range of
      * indices to retrieve and width in terms of base pairs, etc.
      */
-    public function processGndSearch(InputBag $queryStringParams, string $dsn): array
+    public function processGndSearch(InputBag $queryStringParams): array
     {
         $params = $this->getRequestParams($queryStringParams);
 
@@ -92,7 +91,7 @@ final class GndViewerService
     /**
      * Retrieve a single batch of GNDs (one batch consists of a set of GNDs)
      */
-    public function retrieveGndData(string $dsn, InputBag $queryStringParams, string $range): array
+    public function retrieveGndData(InputBag $queryStringParams, string $range): array
     {
         $params = $this->getRequestParams($queryStringParams);
 
