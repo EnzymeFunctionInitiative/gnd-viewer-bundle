@@ -9,6 +9,7 @@ use Efi\Gnd\GndReaderSQLite;
 use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\Gnd\Interface\SingleGndServiceInterface;
 use Efi\GndViewerBundle\Controller\SingleDiagramController;
+use Efi\GndViewerBundle\Service\GndReaderFactory;
 use Efi\GndViewerBundle\Service\GndViewerService;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -82,6 +83,10 @@ class EfiGndViewerBundle extends AbstractBundle
 
         $container->services()
             ->set(GndViewerService::class)
+                ->autoconfigure(true)
+                ->autowire(true)
+                ->public()
+            ->set(GndReaderFactory::class)
                 ->autoconfigure(true)
                 ->autowire(true)
                 ->public();
