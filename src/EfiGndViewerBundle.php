@@ -8,7 +8,8 @@ use Efi\Gnd\GndReaderMySQL;
 use Efi\Gnd\GndReaderSQLite;
 use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\Gnd\Interface\SingleGndServiceInterface;
-use Efi\GndBundle\Service\GndViewerService;
+use Efi\GndViewerBundle\Controller\SingleDiagramController;
+use Efi\GndViewerBundle\Service\GndViewerService;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -50,11 +51,17 @@ class EfiGndViewerBundle extends AbstractBundle
             };
 
             $container->services()
-                ->set('efi_gnd.single_gnd', $class)
-                ->args([
-                    new Reference($serviceConfig['pdo']),
-                ])
-                ->alias(SingleGndServiceInterface::class, 'efi_gnd.single_gnd');
+                ->set('efi_gnd_viewer.single_gnd', $class)
+                    ->args([
+                        new Reference($serviceConfig['pdo']),
+                    ])
+                    ->alias(SingleGndServiceInterface::class, 'efi_gnd_viewer.single_gnd');
+
+            $container->services()
+                ->set(SingleDiagramController::class)
+                    ->autowire(true)      // Injects Logger & SingleGndServiceInterface
+                    ->autoconfigure(true) // Helper tags
+                    ->tag('controller.service_arguments'); // REQUIRED for use in {{ render(controller(...)) }}
         }
 
         if ($config['gnd_reader']['enabled'] === true) {
@@ -66,17 +73,18 @@ class EfiGndViewerBundle extends AbstractBundle
             };
 
             $container->services()
-                ->set('efi_gnd.gnd_reader', $class)
+                ->set('efi_gnd_viewer.gnd_reader', $class)
                 ->args([
                     new Reference($serviceConfig['pdo']),
                 ])
-                ->alias(GndReaderInterface::class, 'efi_gnd.gnd_reader');
+                ->alias(GndReaderInterface::class, 'efi_gnd_viewer.gnd_reader');
         }
 
         $container->services()
             ->set(GndViewerService::class)
                 ->autoconfigure(true)
-                ->autowire(true);
+                ->autowire(true)
+                ->public();
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
