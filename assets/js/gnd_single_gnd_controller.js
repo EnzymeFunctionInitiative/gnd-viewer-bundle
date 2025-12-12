@@ -41,17 +41,17 @@ export default class GndSingleGndController extends Controller {
         const data = this.getFromDataStore(event.params.id);
         const { x, y } = this.getArrowPosition(event.currentTarget);
         const dispatchData = { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: x, y: y };
-        this.dispatch('arrowClick', { detail: dispatchData, openPopup: true, bubbles: true });
+        this.dispatch('arrowClick', { prefix: 'efi-gnd-global', detail: dispatchData, openPopup: true, bubbles: true });
     }
 
     handleArrowMouseOver(event) {
         const data = this.getFromDataStore(event.params.id);
         const { x, y } = this.getArrowPosition(event.currentTarget);
-        this.dispatch('arrowMouseOver', { detail: { data, x: x, y: y }, bubbles: true });
+        this.dispatch('arrowMouseOver', { prefix: 'efi-gnd-global', detail: { data, x: x, y: y }, bubbles: true });
     }
 
     handleArrowMouseOut(event) {
-        this.dispatch('arrowMouseOut', { detail: {}, bubbles: true });
+        this.dispatch('arrowMouseOut', { prefix: 'efi-gnd-global', detail: {}, bubbles: true });
     }
 
     getArrowPosition(targetArrow) {

@@ -1,11 +1,11 @@
 
 <div class="position-absolute p-0 border border-secondary rounded border-2 bg-light d-none info-popup"
     data-controller="efi--gnd-viewer-bundle--gnd-info-popup"
-    data-efi--gnd-viewer-bundle--gnd-info-popup-metadata-url-value="{{ metadata_url|default }}"
+    data-efi--gnd-viewer-bundle--gnd-info-popup-metadata-url-value="{{ app_config.sequence.metadataUrl|default }}"
     data-action="
-        efi--gnd-viewer-bundle--gnd-single-gnd:arrowClick@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowClick
-        efi--gnd-viewer-bundle--gnd-single-gnd:arrowMouseOver@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOver
-        efi--gnd-viewer-bundle--gnd-single-gnd:arrowMouseOut@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOut
+        efi-gnd-global:arrowClick@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowClick
+        efi-gnd-global:arrowMouseOver@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOver
+        efi-gnd-global:arrowMouseOut@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOut
         "
 >
     <div class="d-flex align-items-center border-bottom">

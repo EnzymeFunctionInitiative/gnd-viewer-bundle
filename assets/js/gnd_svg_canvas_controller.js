@@ -161,7 +161,7 @@ export default class GndSvgCanvasController extends Controller {
         const arrowId = event.params.id;
 
         const popupPos = this.renderer.computeInfoPopupPosition(event.currentTarget);
-        const dispatchData = { detail: { arrowId: arrowId, ctrlKey: event.ctrlKey, altKey: event.altKey, x: popupPos.x, y: popupPos.y } };
+        const dispatchData = { detail: { arrowId: arrowId, ctrlKey: event.ctrlKey, altKey: event.altKey, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global' };
 
         if (event.ctrlKey || event.altKey) {
             // Get all of the family IDs that this arrow belongs to
@@ -192,11 +192,11 @@ export default class GndSvgCanvasController extends Controller {
     handleArrowMouseOver(event) {
         const arrowId = event.params.id;
         const popupPos = this.renderer.computeInfoPopupPosition(event.currentTarget);
-        this.dispatch('arrowMouseOver', { detail: { arrowId, x: popupPos.x, y: popupPos.y } });
+        this.dispatch('arrowMouseOver', { detail: { arrowId, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global' });
     }
 
     handleArrowMouseOut(event) {
-        this.dispatch('arrowMouseOut');
+        this.dispatch('arrowMouseOut', { detail: {}, prefix: 'efi-gnd-global' });
     }
 }
 
