@@ -10,14 +10,3 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
 
-    Efi\Gnd\SingleGndMySqlRetrieval:
-        arguments:
-            - '@efi_gnd.database_connection'
-
-    Efi\Gnd\Interface\GndDatabaseServiceInterface: '@Efi\Gnd\SingleGndMySqlRetrieval'
-
-    Efi\GndViewerBundle\Controller\SingleDiagramController:
-        tags: ['controller.service_arguments']
-        arguments:
-            $databaseService: '@Efi\Gnd\Interface\GndDatabaseServiceInterface'
-

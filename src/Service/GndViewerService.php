@@ -1,10 +1,11 @@
 <?php
 
-namespace Efi\GndViewerBundle;
+namespace Efi\GndViewerBundle\Service;
 
+use Efi\Gnd\Dto\GndMetadata;
+use Efi\Gnd\Dto\GndQueryParams;
 use Efi\Gnd\Enum\SequenceVersion;
-use Efi\Gnd\GndReader;
-use Efi\Gnd\GndMetadata;
+use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\GndViewerBundle\Dto\GndRequestParams;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -13,19 +14,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class GndViewerService
 {
     public function __construct(
+        private readonly GndReaderInterface $gndReader,
     )
 	{
     }
 
-    public function getSequenceVersion(string $dsn): SequenceVersion
+    public function getSequenceVersion(): SequenceVersion
     {
-        try {
-            // Throws an exception if the SQLite database was not valid
-            $gndReader = new GndReader($dsn);
-        } catch (Exception $e) {
-            throw new HttpException(500, 'Internal server error');
-        }
-        return $gndReader->getSequenceVersion();
+        return $this->gndReader->getSequenceVersion();
     }
 
     /**
@@ -35,14 +31,7 @@ final class GndViewerService
      */
     public function getMetadata(string $dsn): GndMetadata
     {
-        try {
-            // Throws an exception if the SQLite database was not valid
-            $gndReader = new GndReader($dsn);
-        } catch (Exception $e) {
-            throw new HttpException(500, 'Internal server error');
-        }
-
-        $metadata = $gndReader->getMetadata();
+        $metadata = $this->gndReader->getMetadata();
         return $metadata;
     }
 
@@ -68,19 +57,12 @@ final class GndViewerService
             return $results;
         }
 
-        try {
-            // Throws an exception if the SQLite database was not valid
-            $gndReader = new GndReader($dsn);
-        } catch (Exception $e) {
-            throw new HttpException(500, 'Internal server error');
-        }
-
-        $searchExtent = $gndReader->getSearchExtent($searchItems, $params->toGndQueryParams());
+        $searchExtent = $this->gndReader->getSearchExtent($searchItems, $params->toGndQueryParams());
 
         $results['extent'] = $searchExtent;
 
         if ($params->sequenceVersion) {
-            if (!$this->validateSequenceVersion($params->sequenceVersion, $gndReader)) {
+            if (!$this->validateSequenceVersion($params->sequenceVersion)) {
                 throw new NotFoundHttpException('Invalid parameters (errno 3).');
             }
         }
@@ -92,10 +74,9 @@ final class GndViewerService
         return $results;
     }
 
-    private function validateSequenceVersion(SequenceVersion $requestedVersion, GndReader $gndReader): bool
+    private function validateSequenceVersion(SequenceVersion $requestedVersion): bool
     {
-        $metadata = $gndReader->getMetadata();
-        $dbVersion = $metadata->sequenceVersion;
+        $dbVersion = $this->gndReader->getMetadata()->sequenceVersion;
 
         if ($requestedVersion === SequenceVersion::UniRef50 && $dbVersion === SequenceVersion::UniRef50) {
             return true;
@@ -113,22 +94,15 @@ final class GndViewerService
      */
     public function retrieveGndData(string $dsn, InputBag $queryStringParams, string $range): array
     {
-        try {
-            // Throws an exception if the SQLite database was not valid
-            $gndReader = new GndReader($dsn);
-        } catch (Exception $e) {
-            throw new HttpException(500, 'Internal server error');
-        }
-
         $params = $this->getRequestParams($queryStringParams);
 
         if ($params->sequenceVersion) {
-            if (!$this->validateSequenceVersion($params->sequenceVersion, $gndReader)) {
+            if (!$this->validateSequenceVersion($params->sequenceVersion)) {
                 throw new NotFoundHttpException('Invalid parameters (errno 3).');
             }
         }
 
-        $results = $gndReader->retrieveRanges($range, $params->toGndQueryParams());
+        $results = $this->gndReader->retrieveRanges($range, $params->toGndQueryParams());
 
         return $results;
     }
