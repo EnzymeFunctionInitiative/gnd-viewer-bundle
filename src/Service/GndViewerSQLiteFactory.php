@@ -3,14 +3,13 @@
 namespace Efi\GndViewerBundle\Service;
 
 use Efi\Gnd\GndReaderSQLite;
-use Efi\Gnd\Interface\GndReaderInterface;
 
-class GndReaderFactory
+class GndViewerSQLiteFactory implements GndViewerFactoryInterface
 {
     /**
      * Creates a Reader service for a specific SQLite file on disk.
      */
-    public function createReaderForFile(string $filePath): GndReaderInterface
+    public function createViewerForFile(string $filePath): GndViewerInterface
     {
         $this->ensureFileExists($filePath);
         
@@ -20,7 +19,9 @@ class GndReaderFactory
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
         ]);
 
-        return new GndReaderSQLite($pdo);
+        $gnd = new GndReaderSQLite($pdo);
+
+        return new GndViewerService($gnd);
     }
 
     private function ensureFileExists(string $path): void
