@@ -4,16 +4,23 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c336dfa820fbbc77c34199bfc07f4353",
+    "content-hash": "a51b26c29182439de35f5aa5c357b568",
     "packages": [
         {
-            "name": "efi/gnd",
+            "name": "enzymefunctioninitiative/efi-gnd-lib",
             "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "***REMOVED***",
-                "reference": "752bf21db9316d77469898799df32e1e6d35e583"
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EnzymeFunctionInitiative/efi-gnd-lib.git",
+                "reference": "9c55c7fb8b744cde95a1ae60926335294ed86956"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EnzymeFunctionInitiative/efi-gnd-lib/zipball/9c55c7fb8b744cde95a1ae60926335294ed86956",
+                "reference": "9c55c7fb8b744cde95a1ae60926335294ed86956",
+                "shasum": ""
+            },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -30,16 +37,18 @@
                 }
             ],
             "description": "Library for reading EFI Genome Neighborhood Diagram files from PHP",
-            "transport-options": {
-                "relative": false
-            }
+            "support": {
+                "source": "https://github.com/EnzymeFunctionInitiative/efi-gnd-lib/tree/main",
+                "issues": "https://github.com/EnzymeFunctionInitiative/efi-gnd-lib/issues"
+            },
+            "time": "2025-12-16T20:41:24+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "efi/gnd": 20
+        "enzymefunctioninitiative/efi-gnd-lib": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

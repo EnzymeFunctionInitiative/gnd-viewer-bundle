@@ -1,5 +1,5 @@
 {
-    "name": "efi/gnd-viewer-bundle",
+    "name": "enzymefunctioninitiative/gnd-viewer-bundle",
     "description": "EFI GND Viewer bundle",
     "type": "symfony-bundle",
     "license": "GPL-3.0-only",
@@ -15,13 +15,13 @@
         }
     ],
     "require": {
-        "efi/gnd": "@dev",
+        "enzymefunctioninitiative/efi-gnd-lib": "@dev",
         "php": ">=8.2"
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "***REMOVED***"
+            "type": "vcs",
+            "url": "https://github.com/enzymefunctioninitiative/efi-gnd-lib"
         }
     ],
     "config": {
