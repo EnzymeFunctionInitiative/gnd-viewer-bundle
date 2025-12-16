@@ -48,19 +48,8 @@ export default class GndAppController extends Controller {
     ];
 
     static values = {
-        appConfig: { type: Object, default: {} },
+        appConfig: Object,
     };
-
-    //data-efi--gnd-viewer-bundle--gnd-app-gnd-batch-size-value="{{ gnd_batch_size }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-gnd-set-size-value="{{ gnd_set_size }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-metadata-api-url-value="{{ path('api_gnd_search') }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-record-api-url-value="{{ path('api_gnd_record') }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-job-id-value="{{ job_id }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-job-key-value="{{ job_key }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-database-sequence-version-value="{{ base_sequence_version|default("") }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-requested-sequence-version-value="{{ current_sequence_version|default("") }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-requested-uniref-id-value="{{ uniref_id }}"
-    //data-efi--gnd-viewer-bundle--gnd-app-search-cluster-on-load-value="{{ search_cluster_on_load|default("") }}"
 
     static outlets = ['efi--gnd-viewer-bundle--gnd-gene-window', 'efi--gnd-viewer-bundle--gnd-search-form'];
 

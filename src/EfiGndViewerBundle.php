@@ -4,13 +4,10 @@ namespace Efi\GndViewerBundle;
 
 use Efi\Gnd\SingleGndMySQLRetrieval;
 use Efi\Gnd\SingleGndSQLiteRetrieval;
-use Efi\Gnd\GndReaderMySQL;
-use Efi\Gnd\GndReaderSQLite;
-use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\Gnd\Interface\SingleGndServiceInterface;
 use Efi\GndViewerBundle\Controller\SingleDiagramController;
-use Efi\GndViewerBundle\Service\GndReaderFactory;
-use Efi\GndViewerBundle\Service\GndViewerService;
+use Efi\GndViewerBundle\Service\GndViewerMySQLFactory;
+use Efi\GndViewerBundle\Service\GndViewerSQLiteFactory;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -31,11 +28,17 @@ class EfiGndViewerBundle extends AbstractBundle
                         ->scalarNode('pdo')->isRequired()->info('The Service ID of the PDO connection')->end()
                     ->end()
                 ->end()
-                ->arrayNode('gnd_reader')
+                ->arrayNode('gnd_reader_service')
                     ->canBeEnabled()
                     ->children()
                         ->enumNode('driver')->values(['mysql', 'sqlite'])->isRequired()->end()
                         ->scalarNode('pdo')->isRequired()->info('The Service ID of the PDO connection')->end()
+                    ->end()
+                ->end()
+                ->arrayNode('gnd_viewer_service')
+                    ->canBeEnabled()
+                    ->children()
+                        ->enumNode('driver')->values(['sqlite'])->isRequired()->end()
                     ->end()
                 ->end()
             ->end();
@@ -65,31 +68,51 @@ class EfiGndViewerBundle extends AbstractBundle
                     ->tag('controller.service_arguments'); // REQUIRED for use in {{ render(controller(...)) }}
         }
 
-        if ($config['gnd_reader']['enabled'] === true) {
-            $serviceConfig = $config['gnd_reader'];
-
-            $class = match ($serviceConfig['driver']) {
-                'mysql' => GndReaderMySQL::class,
-                'sqlite' => GndReaderSQLite::class,
-            };
-
-            $container->services()
-                ->set('efi_gnd_viewer.gnd_reader', $class)
-                ->args([
-                    new Reference($serviceConfig['pdo']),
-                ])
-                ->alias(GndReaderInterface::class, 'efi_gnd_viewer.gnd_reader');
-        }
+        $container->services()
+            ->set(GndViewerSQLiteFactory::class)
+            ->autowire(true)
+            ->autoconfigure(true)
+            ->public(); // Optional, but helps if debugging
 
         $container->services()
-            ->set(GndViewerService::class)
-                ->autoconfigure(true)
-                ->autowire(true)
-                ->public()
-            ->set(GndReaderFactory::class)
-                ->autoconfigure(true)
-                ->autowire(true)
-                ->public();
+            ->set(GndViewerMySQLFactory::class)
+            ->autowire(true)
+            ->autoconfigure(true)
+            ->public();
+
+        //if ($config['gnd_viewer']['enabled'] === true) {
+        //    $serviceConfig = $config['gnd_viewer'];
+
+        //    $class = match ($serviceConfig['driver']) {
+        //        'mysql' => GndReaderMySQL::class,
+        //        'sqlite' => GndReaderSQLite::class,
+        //    };
+
+        //    $container->services()
+        //        ->set('efi_gnd_viewer.gnd_viewer', $class)
+        //        ->args([
+        //            new Reference($serviceConfig['pdo']),
+        //        ])
+        //        ->alias(GndReaderInterface::class, 'efi_gnd_viewer.gnd_viewer');
+        //}
+
+        //if ($config['gnd_viewer_service']['enabled'] === true) {
+        //    $serviceConifg = $config['gnd_viewer_service'];
+
+        //    $class = match ($serviceConfig['driver']) {
+        //        'sqlite' => GndViewerSQLiteFactory::class,
+        //    };
+
+        //    $container->services()
+        //        ->set('efi_gnd_viewer.gnd_viewer_service', $class)
+        //        ->alias(GndViewerFactoryInterface::class, 'efi_gnd_viewer.gnd_viewer_service');
+        //}
+
+        //$container->services()
+        //    ->set(GndReaderFactory::class)
+        //        ->autoconfigure(true)
+        //        ->autowire(true)
+        //        ->public();
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void

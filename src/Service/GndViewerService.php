@@ -3,15 +3,13 @@
 namespace Efi\GndViewerBundle\Service;
 
 use Efi\Gnd\Dto\GndMetadata;
-use Efi\Gnd\Dto\GndQueryParams;
 use Efi\Gnd\Enum\SequenceVersion;
 use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\GndViewerBundle\Dto\GndRequestParams;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
-final class GndViewerService
+final class GndViewerService implements GndViewerInterface
 {
     public function __construct(
         private readonly ?GndReaderInterface $gndReader,

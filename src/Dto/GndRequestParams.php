@@ -12,13 +12,13 @@ readonly class GndRequestParams
     public ?float $scaleFactor;
     public ?SequenceVersion $sequenceVersion;
     public ?string $unirefId;
-    public ?string $rawQuer;
+    public ?string $rawQuery;
 
     public function __construct(InputBag $bag)
     {
-        $this->window = $bag->getInt('window') ?: GndQueryParams::defaultWindow();
-        $this->scaleFactor = $bag->has('scale-factor') ? (float) $bag->get('scale-factor') : GndQueryParams::defaultScaleFactor();
-        $this->sequenceVersion = SequenceVersion::tryFrom($bag->get('seq-ver')) ?? GndQueryParams::defaultSequenceVersion();
+        $this->window = $bag->getInt('window') ?: GndQueryParams::getDefaultWindow();
+        $this->scaleFactor = $bag->has('scale-factor') ? (float) $bag->get('scale-factor') : GndQueryParams::getDefaultScaleFactor();
+        $this->sequenceVersion = SequenceVersion::tryFrom($bag->get('seq-ver')) ?? GndQueryParams::getDefaultSequenceVersion();
         $this->unirefId = $bag->get('uniref-id');
         $this->rawQuery = $bag->get('query');
     }

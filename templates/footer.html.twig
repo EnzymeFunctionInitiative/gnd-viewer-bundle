@@ -4,15 +4,15 @@
     <div class="container-fluid d-flex justify-content-between align-items-center h-100 px-3">
 
         <div id="footer-status-container">
-            <span id="footer-message" class="text-muted" data-gnd-app-target="footerMessage">Ready.</span>
-            <div id="footer-progress-container" class="d-none" style="min-width: 250px;" data-gnd-app-target="footerProgressContainer">
+            <span id="footer-message" class="text-muted" data-efi--gnd-viewer-bundle--gnd-app-target="footerMessage">Ready.</span>
+            <div id="footer-progress-container" class="d-none" style="min-width: 250px;" data-efi--gnd-viewer-bundle--gnd-app-target="footerProgressContainer">
                 <div class="progress" role="progressbar" style="height: 12px;">
-                    <div id="footer-progress-bar" class="progress-bar " style="width: 0%" data-gnd-app-target="footerProgressBar"></div>
+                    <div id="footer-progress-bar" class="progress-bar " style="width: 0%" data-efi--gnd-viewer-bundle--gnd-app-target="footerProgressBar"></div>
                 </div>
             </div>
         </div>
 
-        <div id="footer-actions" data-gnd-app-target="footerActions" class="d-none">
+        <div id="footer-actions" data-efi--gnd-viewer-bundle--gnd-app-target="footerActions" class="d-none">
             <button id="show-more-btn" class="btn btn-secondary btn-sm ms-2" data-action="click->gnd-app#showMore">Show {{ app_config.batchSize * app_config.setSize }} more</button>
             <button id="show-all-btn" class="btn btn-secondary btn-sm ms-2" data-action="click->gnd-app#showAll">Show all</button>
         </div>
