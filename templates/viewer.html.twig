@@ -1,4 +1,6 @@
 
+<link rel="stylesheet" href="{{ asset('@efi/gnd-viewer-bundle/styles/gnd.css') }}">
+
 {% set app_config = {
     batchSize: params.gnd_batch_size,
     setSize: params.gnd_set_size,
@@ -26,9 +28,9 @@
         efi--gnd-viewer-bundle--gnd-svg-canvas:batchRenderComplete@window->efi--gnd-viewer-bundle--gnd-app#retrieveAndRenderNextSet
         efi--gnd-viewer-bundle--gnd-gene-window:updateWindowSize@window->efi--gnd-viewer-bundle--gnd-app#updateWindowSize
         "
-    data-eif--gnd-viewer-bundle--gnd-app-app-config-value="{{ app_config|json_encode|e('html_attr') }}"
-    data-efi--gnd-viewer-bundle--gnd-app-gnd-gene-window-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-gene-window']"
-    data-efi--gnd-viewer-bundle--gnd-app-gnd-search-form-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-search-form']"
+    data-efi--gnd-viewer-bundle--gnd-app-app-config-value="{{ app_config|json_encode|e('html_attr') }}"
+    data-efi--gnd-viewer-bundle--gnd-app-efi--gnd-viewer-bundle--gnd-gene-window-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-gene-window']"
+    data-efi--gnd-viewer-bundle--gnd-app-efi--gnd-viewer-bundle--gnd-search-form-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-search-form']"
     >
 
     {% include('@EfiGndViewer/sidebar.html.twig') with { app_config } %}
