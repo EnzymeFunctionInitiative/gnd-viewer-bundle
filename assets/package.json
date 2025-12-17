@@ -1,5 +1,5 @@
 {
-    "name": "@efi/gnd-viewer-bundle",
+    "name": "@enzymefunctioniniative/gnd-viewer-bundle",
     "symfony": {
         "controllers": {
             "gnd_app": {
