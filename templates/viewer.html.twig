@@ -46,7 +46,7 @@
 
     {% include('@EfiGndViewer/canvas.html.twig') with { app_config } %}
 
-    {% include('@EfiGndViewer/footer.html.twig') with { app_config } %}
+    {% include('@EfiGndViewer/footer.html.twig') with { 'app_config': app_config } %}
 
     {% include('@EfiGndViewer/components/info_popup.html.twig') with { app_config } %}
 
