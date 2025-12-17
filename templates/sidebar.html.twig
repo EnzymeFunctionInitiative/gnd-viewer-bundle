@@ -5,13 +5,11 @@
     {% endif %}
         <h4><i class="bi bi-search"></i> Search</h4>
         <div
-            data-controller="efi--gnd-viewer-bundle--gnd-search-form"
-            data-action="
-                efi--gnd-viewer-bundle--gnd-app:finishedBatchRetrieval@window->efi--gnd-viewer-bundle--gnd-search-form#finishedBatchRetrieval
-                efi--gnd-viewer-bundle--gnd-app:invalidSearch@window->efi--gnd-viewer-bundle--gnd-search-form#invalidSearch
-                "
+            {{ stimulus_controller(gnd.search) }}
+            {{ stimulus_action(gnd.app, 'finishedBatchRetrieval', 'finishedBatchRetrieval@window', gnd.search) }}
+            {{ stimulus_action(gnd.app, 'invalidSearch', 'invalidSearch@window', gnd.search) }}
         >
-            <form action="{{ app_config.api.metadata }}" data-action="submit->efi--gnd-viewer-bundle--gnd-search-form#submit" class="needs-validation">
+            <form action="{{ app_config.api.metadata }}" {{ stimulus_action(gnd.search, 'submit', 'submit') }} class="needs-validation">
                 {% if app_config.sequence.requestedVersion != 'uniprot' %}
                     <fieldset>
                         <div class="mb-1">
@@ -33,17 +31,17 @@
                 <div class="mb-2">
                     <label for="search-input" class="form-label">Input multiple clusters and/or individual sequence IDs.</label>
                     <div class="input-group has-validation">
-                        <textarea class="form-control" id="search-input" rows="4" data-efi--gnd-viewer-bundle--gnd-search-form-target="query" placeholder="" required></textarea>
+                        <textarea class="form-control" id="search-input" rows="4" {{ stimulus_target(gnd.search, 'query') }} placeholder="" required></textarea>
                         <div class="invalid-feedback">
                             Please enter a search term
                         </div>
                     </div>
-                    <div class="d-none alert alert-warning tiny-alert my-2" role="alert" data-efi--gnd-viewer-bundle--gnd-search-form-target="searchAlert">
+                    <div class="d-none alert alert-warning tiny-alert my-2" role="alert" {{ stimulus_target(gnd.search, 'searchAlert') }}>
                         No GNDs were found for the search term
                     </div>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-sm btn-light" data-efi--gnd-viewer-bundle--gnd-search-form-target="submitButton">Search</button>
+                    <button type="submit" class="btn btn-sm btn-light" {{ stimulus_target(gnd.search, 'submitButton') }}>Search</button>
                 </div>
             </form>
         </div>
@@ -53,19 +51,19 @@
     {% endif %}
     <h4><i class="bi bi-funnel-fill"></i> Filtering</h4>
     <div id="gnd-filter-container"
-        data-controller="efi--gnd-viewer-bundle--gnd-filter"
-        data-efi--gnd-viewer-bundle--gnd-filter-efi--gnd-viewer-bundle--gnd-svg-canvas-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-svg-canvas']"
-        data-action="
-            efi-gnd-global:arrowClick@window->efi--gnd-viewer-bundle--gnd-filter#handleArrowClick
-            efi--gnd-viewer-bundle--gnd-app:finishedBatchRetrieval@window->efi--gnd-viewer-bundle--gnd-filter#finishRetrieval
-            efi--gnd-viewer-bundle--gnd-app:initializeApp@window->efi--gnd-viewer-bundle--gnd-filter#initializeUi
-            efi--gnd-viewer-bundle--gnd-app:newDiagrams@window->efi--gnd-viewer-bundle--gnd-filter#newDiagrams
-            "
+        {{ stimulus_controller(gnd.filter, {}, {
+            (gnd.canvas): "[data-controller='#{gnd.canvas|replace({'/': '--'})}']"
+        }) }}
+        {{ stimulus_action('efi-gnd-global', 'handleArrowClick', 'arrowClick@window', gnd.filter) }}
+        {{ stimulus_action(gnd.app, 'finishRetrieval', 'finishedBatchRetrieval@window', gnd.filter) }}
+        {{ stimulus_action(gnd.app, 'initializeUi', 'initializeApp@window', gnd.filter) }}
     >
-        <fieldset data-efi--gnd-viewer-bundle--gnd-filter-target="fieldset">
+        <fieldset {{ stimulus_target(gnd.filter, 'fieldset') }}>
             <div>
                 <label class="form-check-label py-1">
-                    <input class="form-check-input m-2" type="checkbox" value="" data-action="change->efi--gnd-viewer-bundle--gnd-filter#toggleSwissProt" data-efi--gnd-viewer-bundle--gnd-filter-target="showSwissProt">
+                    <input class="form-check-input m-2" type="checkbox" value=""
+                        {{ stimulus_target(gnd.filter, 'showSwissProt') }}
+                        {{ stimulus_action(gnd.filter, 'toggleSwissProt', 'change') }}>
                     Show IDs with SwissProt
                 </label>
             </div>
@@ -78,7 +76,7 @@
                             </button>
                         </h2>
                         <div id="pfamFamilyListAccordion" class="accordion-collapse collapse" data-bs-parent="#familyFilterAccordion">
-                            <div id="pfamFamilyList" class="accordion-body m-0 p-2 text-bg-dark" data-efi--gnd-viewer-bundle--gnd-filter-target="pfamFamilyList">
+                            <div id="pfamFamilyList" class="accordion-body m-0 p-2 text-bg-dark" {{ stimulus_target(gnd.filter, 'pfamFamilyList') }}></div>
                             </div>
                         </div>
                     </div>
@@ -89,41 +87,52 @@
                             </button>
                         </h2>
                         <div id="interproFamilyListAccordion" class="accordion-collapse collapse" data-bs-parent="#familyFilterAccordion">
-                            <div id="interproFamilyList" class="accordion-body m-0 p-2 text-bg-dark" data-efi--gnd-viewer-bundle--gnd-filter-target="interproFamilyList">
-                            </div>
+                            <div id="interproFamilyList" class="accordion-body m-0 p-2 text-bg-dark" {{ stimulus_target(gnd.filter, 'interproFamilyList') }}></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="my-2">
                 Search families:
-                <input type="text" data-efi--gnd-viewer-bundle--gnd-filter-target="searchInput" class="form-input" data-action="keydown->efi--gnd-viewer-bundle--gnd-filter#searchFilterInputBox">
-                <button type="button" class="btn btn-dark btn-sm" data-action="click->efi--gnd-viewer-bundle--gnd-filter#searchFilter"><i class="bi bi-search"></i></button>
+                <input type="text" class="form-input"
+                    {{ stimulus_target(gnd.filter, 'searchInput') }}
+                    {{ stimulus_action(gnd.filter, 'searchFilterInputBox', 'keydown') }}>
+                <button type="button" class="btn btn-dark btn-sm" {{ stimulus_action(gnd.filter, 'searchFilter') }}><i class="bi bi-search"></i></button>
             </div>
-            <div class="border border-secondary rounded d-none p-1 my-1" id="family-highlight-legend" data-efi--gnd-viewer-bundle--gnd-filter-target="legendContainer">
-            </div>
+            <div class="border border-secondary rounded d-none p-1 my-1" id="family-highlight-legend" {{ stimulus_target(gnd.filter, 'legendContainer') }}></div>
             <div>
-                <button type="button" class="btn btn-light btn-sm" data-action="click->efi--gnd-viewer-bundle--gnd-filter#clearFilter"><i class="bi bi-x-lg"></i> Reset Filters</button>
+                <button type="button" class="btn btn-light btn-sm" {{ stimulus_action(gnd.filter, 'clearFilter') }}><i class="bi bi-x-lg"></i> Reset Filters</button>
             </div>
         </fieldset>
     </div>
     <hr>
     <h4><i class="bi bi-arrows-fullscreen"></i> Genome Window</h4>
     <div id="gnd-window-container"
-        data-controller="efi--gnd-viewer-bundle--gnd-gene-window"
-        data-action="
-            efi--gnd-viewer-bundle--gnd-app:initializeApp@window->efi--gnd-viewer-bundle--gnd-gene-window#initializeApp
-            "
+        {{ stimulus_controller(gnd.window) }}
+        {{ stimulus_action(gnd.app, 'initializeApp@window', 'initializeApp', gnd.window) }}
     >
         <div class="my-1">
-            Window size: <select class="w-auto mx-2" id="gnd-window-size" data-efi--gnd-viewer-bundle--gnd-gene-window-target="windowSize" data-action="change->efi--gnd-viewer-bundle--gnd-gene-window#windowSizeChange"><option>10</option><option>11</option></select> genes <i class="bi bi-info-circle" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="The number of genes to display on either side of the query gene"></i>
+            Window size: <select class="w-auto mx-2" id="gnd-window-size"
+                {{ stimulus_target(gnd.window, 'windowSize') }}
+                {{ stimulus_action(gnd.window, 'windowSizeChange', 'change') }}>
+                <option>10</option><option>11</option>
+            </select> genes
+            <i class="bi bi-info-circle" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="The number of genes to display on either side of the query gene"></i>
         </div>
         {#
         <div class="my-2">
-            <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (large)" data-efi--gnd-viewer-bundle--gnd-gene-window-target="zoomOutLarge" data-action="click->efi--gnd-viewer-bundle--gnd-gene-window#zoomOutLarge"><i class="bi bi-zoom-out"></i></button>
-            <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (small)" data-efi--gnd-viewer-bundle--gnd-gene-window-target="zoomOutSmall" data-action="click->efi--gnd-viewer-bundle--gnd-gene-window#zoomOutSmall"><i class="bi bi-zoom-out"></i></button>
-            <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (small)" data-efi--gnd-viewer-bundle--gnd-gene-window-target="zoomInSmall" data-action="click->efi--gnd-viewer-bundle--gnd-gene-window#zoomInSmall"><i class="bi bi-zoom-in"></i></button>
-            <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (large)" data-efi--gnd-viewer-bundle--gnd-gene-window-target="zoomInLarge" data-action="click->efi--gnd-viewer-bundle--gnd-gene-window#zoomInLarge"><i class="bi bi-zoom-in"></i></button>
+            <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (large)"
+                {{ stimulus_target(gnd.window, 'zoomOutLarge') }}
+                {{ stimulus_action(gnd.window, 'zoomOutLarge', 'click') }}><i class="bi bi-zoom-out"></i></button>
+            <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (small)"
+                {{ stimulus_target(gnd.window, 'zoomOutSmall') }}
+                {{ stimulus_action(gnd.window, 'zoomOutSmall', 'click') }}><i class="bi bi-zoom-out"></i></buttn)>
+            <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (small)"
+                {{ stimulus_target(gnd.window, 'zoomInSmall') }}
+                {{ stimulus_action(gnd.window, 'zoomInSmall', 'click') }}><i class="bi bi-zoom-in"></i></button>
+            <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (large)"
+                {{ stimulus_target(gnd.window, 'zoomInLarge') }}
+                {{ stimulus_action(gnd.window, 'zoomInLarge', 'click') }}><i class="bi bi-zoom-in"></i></button>
         </div>
         #}
         <div class="my-2 lh-1">

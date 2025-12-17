@@ -1,5 +1,16 @@
 
-<link rel="stylesheet" href="{{ asset('@efi/gnd-viewer-bundle/styles/gnd.css') }}">
+{% set efi = 'enzymefunctioninitiative/gnd-viewer-bundle' %}
+{% set gnd = {
+    'app':          efi ~ '/gnd_app',
+    'filter':       efi ~ '/gnd_filter',
+    'window':       efi ~ '/gnd_gene_window',
+    'info_popup':   efi ~ '/gnd_info_popup',
+    'loading':      efi ~ '/gnd_loading',
+    'search':       efi ~ '/gnd_search_form',
+    'canvas':       efi ~ '/gnd_svg_canvas'
+} %}
+
+<link rel="stylesheet" href="{{ asset('@enzymefunctioniniative/gnd-viewer-bundle/styles/gnd.css') }}">
 
 {% set app_config = {
     batchSize: params.gnd_batch_size,
@@ -22,15 +33,13 @@
 } %}
 
 <div
-    data-controller="efi--gnd-viewer-bundle--gnd-app"
-    data-action="
-        efi--gnd-viewer-bundle--gnd-search-form:submitSearch@window->efi--gnd-viewer-bundle--gnd-app#loadFromSearch
-        efi--gnd-viewer-bundle--gnd-svg-canvas:batchRenderComplete@window->efi--gnd-viewer-bundle--gnd-app#retrieveAndRenderNextSet
-        efi--gnd-viewer-bundle--gnd-gene-window:updateWindowSize@window->efi--gnd-viewer-bundle--gnd-app#updateWindowSize
-        "
-    data-efi--gnd-viewer-bundle--gnd-app-app-config-value="{{ app_config|json_encode|e('html_attr') }}"
-    data-efi--gnd-viewer-bundle--gnd-app-efi--gnd-viewer-bundle--gnd-gene-window-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-gene-window']"
-    data-efi--gnd-viewer-bundle--gnd-app-efi--gnd-viewer-bundle--gnd-search-form-outlet="[data-controller='efi--gnd-viewer-bundle--gnd-search-form']"
+    {{ stimulus_controller(gnd.app, { 'app-config': app_config }, {
+         (gnd.window): "[data-controller='#{gnd.window|replace({'/': '--'})}']",
+         (gnd.search): "[data-controller='#{gnd.search|replace({'/': '--'})}']"
+    }) }}
+    {{ stimulus_action(gnd.search, 'loadFromSearch', 'submitSearch@window', gnd.app) }}
+    {{ stimulus_action(gnd.canvas, 'retrieveAndRenderNextSet', 'batchRenderComplete@window', gnd.app) }}
+    {{ stimulus_action(gnd.window, 'updateWindowSize', 'updateWindowSize@window', gnd.app) }}
     >
 
     {% include('@EfiGndViewer/sidebar.html.twig') with { app_config } %}
