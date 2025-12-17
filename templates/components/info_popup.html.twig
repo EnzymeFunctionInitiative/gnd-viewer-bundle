@@ -3,7 +3,7 @@
 
 <div class="position-absolute p-0 border border-secondary rounded border-2 bg-light d-none info-popup"
     {{ stimulus_controller(infoPopup, {
-        'metadata-url':  app_config.sequence.metadataUrl
+        'metadata-url':  metadata_url|default("")
     }) }}
     {{ stimulus_action('efi-gnd-global', 'arrowClick@window', 'handleArrowClick', infoPopup) }}
     {{ stimulus_action('efi-gnd-global', 'arrowMouseOver@window', 'handleArrowOver', infoPopup) }}
