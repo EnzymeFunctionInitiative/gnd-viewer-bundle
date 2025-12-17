@@ -1,19 +1,20 @@
 
+{% set infoPopup = 'enzymefunctioninitiative/gnd-viewer-bundle/gnd-info-popup' %}
+
 <div class="position-absolute p-0 border border-secondary rounded border-2 bg-light d-none info-popup"
-    data-controller="efi--gnd-viewer-bundle--gnd-info-popup"
-    data-efi--gnd-viewer-bundle--gnd-info-popup-metadata-url-value="{{ app_config.sequence.metadataUrl|default }}"
-    data-action="
-        efi-gnd-global:arrowClick@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowClick
-        efi-gnd-global:arrowMouseOver@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOver
-        efi-gnd-global:arrowMouseOut@window->efi--gnd-viewer-bundle--gnd-info-popup#handleArrowOut
-        "
+    {{ stimulus_controller(infoPopup, {
+        'metadata-url':  app_config.sequence.metadataUrl
+    }) }}
+    {{ stimulus_action('efi-gnd-global', 'arrowClick@window', 'handleArrowClick', infoPopup) }}
+    {{ stimulus_action('efi-gnd-global', 'arrowMouseOver@window', 'handleArrowOver', infoPopup) }}
+    {{ stimulus_action('efi-gnd-global', 'arrowMouseOut@window', 'handleArrowOut', infoPopup) }}
 >
     <div class="d-flex align-items-center border-bottom">
-        <span class="px-2 py-1 mr-5" data-efi--gnd-viewer-bundle--gnd-info-popup-target="idDisplay"></span>
+        <span class="px-2 py-1 mr-5" {{ stimulus_target(infoPopup, 'idDisplay') }}></span>
         <div class="d-flex ms-auto">
             {% if show_metadata_button|default(true) %}
                 <button
-                        data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#openMetadataPage"
+                        {{ stimulus_action(infoPopup, 'openMetadataPage', 'click') }}
                         class="btn btn-link border-0"
                         aria-label="Metadata Tool"
                         data-controller="tooltip"
@@ -24,7 +25,7 @@
                 </button>
             {% endif %}
             <button
-                    data-action="click->efi--gnd-viewer-bundle--gnd-info-popup#copyToClipboard"
+                    {{ stimulus_action(infoPopup, 'copyToClipboard', 'click') }}
                     class="btn btn-link border-0"
                     aria-label="Copy to clipboard"
                     data-controller="tooltip"
@@ -36,18 +37,18 @@
         </div>
     </div>
     <div class="p-2">
-        <div>Description: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="description"></span></div>
-        <div>Annotation Status: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="status"></span></div>
-        <div>Organism: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="organism"></span></div>
+        <div>Description: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'description') }}></span></div>
+        <div>Annotation Status: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'status') }}></span></div>
+        <div>Organism: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'organism') }}></span></div>
         <div class="info-popup-group">
             <div class=""><b>Pfam</b></div>
-            <div><span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="pfam"></span></div>
+            <div><span class="info-popup-value" {{ stimulus_target(infoPopup, 'pfam') }}></span></div>
         </div>
-        <div class="info-popup-group" data-efi--gnd-viewer-bundle--gnd-info-popup-target="interproGroup">
+        <div class="info-popup-group" {{ stimulus_target(infoPopup, 'interproGroup') }}>
             <div class=""><b>InterPro</b></div>
-            <div><span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="interpro"></span></div>
+            <div><span class="info-popup-value" {{ stimulus_target(infoPopup, 'interpro') }}></span></div>
         </div>
-        <div class="info-popup-group">Sequence Length: <span class="info-popup-value" data-efi--gnd-viewer-bundle--gnd-info-popup-target="length"></span></div>
+        <div class="info-popup-group">Sequence Length: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'length') }}></span></div>
     </div>
 </div>
 

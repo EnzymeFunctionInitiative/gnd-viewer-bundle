@@ -4,9 +4,10 @@
 <div id="{{ instance_id }}">
     <div>
         <svg width="100%" 
-             data-controller="efi--gnd-viewer-bundle--gnd-single-gnd"
-             data-efi--gnd-viewer-bundle--gnd-single-gnd-data-value="{{ diagram_json|json_encode|e('html_attr') }}"
-             data-efi--gnd-viewer-bundle--gnd-single-gnd-stats-value="{{ diagram_stats|json_encode|e('html_attr') }}"
+            {{ stimulus_controller('enzymefunctioninitiative/gnd-viewer-bundle/gnd-single-gnd', {
+                'data':  diagram_json,
+                'stats': diagram_stats
+            }) }}
         ></svg>
     </div>
 </div>
