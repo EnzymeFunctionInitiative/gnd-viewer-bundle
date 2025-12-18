@@ -51,7 +51,7 @@ export default class GndAppController extends Controller {
         appConfig: Object,
     };
 
-    static outlets = ['efi--gnd-viewer-bundle--gnd-gene-window', 'efi--gnd-viewer-bundle--gnd-search-form'];
+    static outlets = ['enzymefunctioninitiative--gnd-viewer-bundle--gnd-gene-window', 'enzymefunctioninitiative--gnd-viewer-bundle--gnd-search-form'];
 
     dataset = null;
 
