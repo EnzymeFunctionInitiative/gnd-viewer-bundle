@@ -37,9 +37,9 @@
          (gnd.window): "[data-controller='#{gnd.window|replace({'/': '--'})}']",
          (gnd.search): "[data-controller='#{gnd.search|replace({'/': '--'})}']"
     }) }}
-    {{ stimulus_action(gnd.search, 'loadFromSearch', 'submitSearch@window', { 'controller': gnd.app }) }}
-    {{ stimulus_action(gnd.canvas, 'retrieveAndRenderNextSet', 'batchRenderComplete@window', { 'controller': gnd.app }) }}
-    {{ stimulus_action(gnd.window, 'updateWindowSize', 'updateWindowSize@window', { 'controller': gnd.app }) }}
+    {{ stimulus_action(gnd.app, 'loadFromSearch', gnd.search+':submitSearch@window') }}
+    {{ stimulus_action(gnd.app, 'retrieveAndRenderNextSet', gnd.canvas+':batchRenderComplete@window') }}
+    {{ stimulus_action(gnd.app, 'updateWindowSize', gnd.window+':updateWindowSize@window') }}
     >
 
     {% include('@EfiGndViewer/sidebar.html.twig') with { app_config } %}

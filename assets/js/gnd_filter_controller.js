@@ -237,7 +237,7 @@ export default class GndFilterController extends Controller {
             const legendItem = document.createElement('div');
             legendItem.className = 'family-legend-item';
             legendItem.innerHTML = `
-                <span class="family-legend-item-color" style="background-color: ${itemData.color}" data-action="click->efi--gnd-viewer-bundle--gnd-filter#clearLegendItem"><i class="bi bi-x" data-family-id="${itemData.familyId}"></i></span>
+                <span class="family-legend-item-color" style="background-color: ${itemData.color}" data-action="click->enzymefunctioninitiative--gnd-viewer-bundle--gnd-filter#clearLegendItem"><i class="bi bi-x" data-family-id="${itemData.familyId}"></i></span>
                 <span class="family-legend-item-name">${itemData.familyName}</span>
             `;
             this.legendContainerTarget.appendChild(legendItem);
@@ -270,7 +270,7 @@ export default class GndFilterController extends Controller {
         div.className = 'form-check filter-item';
         div.innerHTML = `
             <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" value="${familyId}" id="fam-${familyId}" data-action="change->efi--gnd-viewer-bundle--gnd-filter#handleFamilyToggle" data-efi--gnd-viewer-bundle--gnd-filter-target="checkbox" data-family-id="${familyId}" data-family-name="${familyName}">
+                <input class="form-check-input" type="checkbox" value="${familyId}" id="fam-${familyId}" data-action="change->enzymefunctioninitiative--gnd-viewer-bundle--gnd-filter#handleFamilyToggle" data-enzymefunctioninitiative--gnd-viewer-bundle--gnd-filter-target="checkbox" data-family-id="${familyId}" data-family-name="${familyName}">
                 ${familyName}
             </label>
         `;

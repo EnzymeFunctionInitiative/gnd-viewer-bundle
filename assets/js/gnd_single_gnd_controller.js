@@ -12,7 +12,7 @@ export default class GndSingleGndController extends Controller {
     connect() {
         const colorService = new GndColor();
         this.diagramStore = new GndDiagramStore(colorService);
-        this.renderer = new GndRenderer(this.element, 'efi--gnd-viewer-bundle--gnd-single-gnd');
+        this.renderer = new GndRenderer(this.element, 'enzymefunctioninitiative--gnd-viewer-bundle--gnd-single-gnd');
 
         const drawables = this.diagramStore.updateStore(this.dataValue);
 
