@@ -5,9 +5,7 @@
     {{ stimulus_controller(infoPopup, {
         'metadata-url':  metadata_url|default("")
     }) }}
-    {{ stimulus_action(infoPopup, 'handleArrowClick', 'efi-gnd-global:arrowClick@window') }}
-    {{ stimulus_action(infoPopup, 'handleArrowOver', 'efi-gnd-global:arrowMouseOver@window') }}
-    {{ stimulus_action(infoPopup, 'handleArrowOut', 'efi-gnd-global:arrowMouseOut@window') }}
+    {{ stimulus_action(infoPopup, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(infoPopup, 'handleArrowOver', 'efi-gnd-global:arrowMouseOver@window')|stimulus_action(infoPopup, 'handleArrowOut', 'efi-gnd-global:arrowMouseOut@window') }}
 >
     <div class="d-flex align-items-center border-bottom">
         <span class="px-2 py-1 mr-5" {{ stimulus_target(infoPopup, 'idDisplay') }}></span>
