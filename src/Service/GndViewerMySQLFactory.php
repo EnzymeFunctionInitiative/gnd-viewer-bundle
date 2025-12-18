@@ -1,6 +1,6 @@
 <?php
 
-namespace Efi\GndViewerBundle\Factory;
+namespace Efi\GndViewerBundle\Service;
 
 use Efi\GndViewerBundle\Service\GndViewer;
 use Efi\GndViewerBundle\Service\GndViewerInterface;
