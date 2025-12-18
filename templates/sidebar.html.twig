@@ -6,8 +6,7 @@
         <h4><i class="bi bi-search"></i> Search</h4>
         <div
             {{ stimulus_controller(gnd.search) }}
-            {{ stimulus_action(gnd.search, 'finishedBatchRetrieval', gnd.app+':finishedBatchRetrieval@window') }}
-            {{ stimulus_action(gnd.search, 'invalidSearch', gnd.app+':invalidSearch@window') }}
+            {{ stimulus_action(gnd.search, 'finishedBatchRetrieval', gnd.app+':finishedBatchRetrieval@window')|stimulus_action(gnd.search, 'invalidSearch', gnd.app+':invalidSearch@window') }}
         >
             <form action="{{ app_config.api.metadata }}" {{ stimulus_action(gnd.search, 'submit', 'submit') }} class="needs-validation">
                 {% if app_config.sequence.requestedVersion != 'uniprot' %}
@@ -54,9 +53,7 @@
         {{ stimulus_controller(gnd.filter, {}, {
             (gnd.canvas): "[data-controller='#{gnd.canvas|replace({'/': '--'})}']"
         }) }}
-        {{ stimulus_action(gnd.filter, 'handleArrowClick', 'efi-gnd-global:arrowClick@window') }}
-        {{ stimulus_action(gnd.filter, 'finishRetrieval', gnd.app+':finishedBatchRetrieval@window') }}
-        {{ stimulus_action(gnd.filter, 'initializeUi', gnd.app+':initializeApp@window') }}
+        {{ stimulus_action(gnd.filter, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(gnd.filter, 'finishRetrieval', gnd.app+':finishedBatchRetrieval@window')|stimulus_action(gnd.filter, 'initializeUi', gnd.app+':initializeApp@window') }}
     >
         <fieldset {{ stimulus_target(gnd.filter, 'fieldset') }}>
             <div>
