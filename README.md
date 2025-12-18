@@ -18,7 +18,7 @@ Symfony bundle for GND viewer user interface
    
     # Need to add to assets/controllers.json in consuming app:
 
-        "@efi/gnd-viewer-bundle": {
+        "@enzymefunctioninitiative/gnd-viewer-bundle": {
              "gnd_app": { "fetch": "eager", "enabled": true },
              "gnd_single_gnd": { "fetch": "eager", "enabled": true },
              "gnd_filter": { "fetch": "eager", "enabled": true },
@@ -29,11 +29,6 @@ Symfony bundle for GND viewer user interface
              "gnd_svg_canvas": { "fetch": "eager", "enabled": true }
         } 
 
+    # Need to add to config/bundles.php:
 
-    ##### Add to importmap.php
-
-    ####    '@efi/gnd-viewer-bundle/styles/gnd.css' => [
-    ####        'path' => '@efi/gnd-viewer-bundle/styles/gnd.css',
-    ####    ],
-
-    ####php bin/console importmap:require "@efi/gnd-viewer-bundle/styles/gnd.css"
+    Efi\GndViewerBundle\EfiGndViewerBundle::class => ['all' => true],
