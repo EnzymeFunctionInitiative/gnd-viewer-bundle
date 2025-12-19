@@ -92,8 +92,8 @@ class EfiGndViewerBundle extends AbstractBundle
         $builder->prependExtensionConfig('framework', [
             'asset_mapper' => [
                 'paths' => [
-                    // This maps the "assets/" folder to the namespace "@efi/gnd-viewer-bundle"
-                    __DIR__ . '/../assets' => '@efi/gnd-viewer-bundle',
+                    // This maps the "assets/" folder to the namespace "@enzymefunctioninitiative/gnd-viewer-bundle"
+                    __DIR__ . '/../assets' => '@enzymefunctioninitiative/gnd-viewer-bundle',
                 ],
             ],
         ]);

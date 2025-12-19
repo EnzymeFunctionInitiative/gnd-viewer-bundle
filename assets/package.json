@@ -1,5 +1,5 @@
 {
-    "name": "@enzymefunctioniniative/gnd-viewer-bundle",
+    "name": "@enzymefunctioninitiative/gnd-viewer-bundle",
     "symfony": {
         "controllers": {
             "gnd_app": {
@@ -7,7 +7,7 @@
                 "fetch": "eager",
                 "enabled": true,
                 "autoimport": {
-                    "@efi/gnd-viewer-bundle/styles/gnd.css": true
+                    "@enzymefunctioninitiative/gnd-viewer-bundle/styles/gnd.css": true
                 }
             },
             "gnd_single_gnd": {
@@ -15,7 +15,7 @@
                 "fetch": "eager",
                 "enabled": true,
                 "autoimport": {
-                    "@efi/gnd-viewer-bundle/styles/gnd.css": true
+                    "@enzymefunctioninitiative/gnd-viewer-bundle/styles/gnd.css": true
                 }
             },
             "gnd_filter": {

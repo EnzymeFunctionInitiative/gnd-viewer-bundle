@@ -1,8 +1,10 @@
 import { Controller } from '@hotwired/stimulus';
+import Util from './gnd/util.js';
 
 export default class GndInfoPopupController extends Controller {
     static values = {
-        metadataUrl: String
+        metadataUrl: String,
+        canvasId: String,
     };
 
     static targets = [
@@ -25,6 +27,26 @@ export default class GndInfoPopupController extends Controller {
         this.keepPopupOpen = false;
         this.canvasWidth = window.innerWidth;
         this.diagramHeight = 80;
+        setTimeout(() => {
+            this.initializeOutlets();
+        }, 0);
+    }
+
+    initializeOutlets() {
+        this.svgCanvasOutlet = Util.findController(
+            this.application,
+            this.canvasIdValue,
+            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-svg-canvas'
+        );
+        this.verticalOffset = null;
+    }
+
+    getVerticalOffset() {
+        if (this.verticalOffset === null) {
+            this.verticalOffset = this.svgCanvasOutlet?.getVerticalOffset() ?? 0;
+            console.log(this.verticalOffset);
+        }
+        return this.verticalOffset;
     }
 
     disconnect() {
@@ -102,7 +124,7 @@ export default class GndInfoPopupController extends Controller {
             newLeft = offsetX;
         }
 
-        let newTop = y;
+        let newTop = y + this.getVerticalOffset();
         if (newTop + popupHeight > bottomEdge) {
             newTop = y - popupHeight - this.diagramHeight;
         }

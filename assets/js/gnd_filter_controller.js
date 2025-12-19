@@ -1,9 +1,20 @@
 import { Controller } from '@hotwired/stimulus';
+import Util from './gnd/util.js';
 
 export default class GndFilterController extends Controller {
-    static targets = ['pfamFamilyList', 'interproFamilyList', 'searchInput', 'showSwissProt', 'fieldset', 'checkbox', 'legendContainer'];
+    static targets = [
+        'pfamFamilyList',
+        'interproFamilyList',
+        'searchInput',
+        'showSwissProt',
+        'fieldset',
+        'checkbox',
+        'legendContainer',
+    ];
 
-    static outlets = ['efi--gnd-viewer-bundle--gnd-svg-canvas'];
+    static values = {
+        svgCanvasId: String,
+    };
 
     // Map family ID to description
     familyNameMap = new Map();
@@ -19,6 +30,18 @@ export default class GndFilterController extends Controller {
         this.pfamAccordionButton = document.getElementById('pfamFamilyListAccordionButton');
         this.interproAccordion = document.getElementById('interproFamilyListAccordion');
         this.interproAccordionButton = document.getElementById('interproFamilyListAccordionButton');
+
+        setTimeout(() => {
+            this.initializeOutlets();
+        }, 0);
+    }
+
+    initializeOutlets() {
+        this.svgCanvasOutlet = Util.findController(
+            this.application,
+            this.svgCanvasIdValue,
+            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-svg-canvas'
+        );
     }
 
     // ----- EVENT HANDLERS -----
@@ -81,7 +104,7 @@ export default class GndFilterController extends Controller {
     }
 
     toggleSwissProt(event) {
-        this.efiGndViewerBundleGndSvgCanvasOutlet.toggleSwissProts(event.target.checked);
+        this.svgCanvasOutlet.toggleSwissProts(event.target.checked);
     }
 
     /**
@@ -112,7 +135,7 @@ export default class GndFilterController extends Controller {
     clearFilter(event, clearSearchQuery = true) {
         this.checkboxTargets.forEach(checkbox => checkbox.checked = false);
         this.showSwissProtTarget.checked = false;
-        this.efiGndViewerBundleGndSvgCanvasOutlet.clearAllHighlights();
+        this.svgCanvasOutlet.clearAllHighlights();
         this.highlightedFamilyIds.clear();
         this.resetFamilySearch();
         this.resetFamilyCheckboxes();
@@ -295,7 +318,7 @@ export default class GndFilterController extends Controller {
      * Calls the svg canvas controller and updates the legend.
      */
     toggleFamily(familyId, isChecked) {
-        this.efiGndViewerBundleGndSvgCanvasOutlet.toggleFamily(familyId, isChecked);
+        this.svgCanvasOutlet.toggleFamily(familyId, isChecked);
         this.updateLegendFamilyIds(familyId, isChecked);
         this.updateLegend();
     }

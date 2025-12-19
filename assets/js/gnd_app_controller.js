@@ -1,8 +1,9 @@
 import { Controller } from '@hotwired/stimulus';
-import GndDataset from '../js/gnd/dataset.js';
-import GndColor from '../js/gnd/color.js';
-import GndDiagramStore from '../js/gnd/data.js';
-import Constants from '../js/gnd/constants.js';
+import GndDataset from './gnd/dataset.js';
+import GndColor from './gnd/color.js';
+import GndDiagramStore from './gnd/data.js';
+import Constants from './gnd/constants.js';
+import Util from './gnd/util.js';
 
 // The data loader controller is responsible for fetching data from the backend as well
 // as handling retrieval events (e.g. search and retrieval buttons) and updating the
@@ -45,13 +46,15 @@ export default class GndAppController extends Controller {
         'footerProgressContainer',
         'footerProgressBar',
         'metadataContainer',
+        'geneWindowContainer',
+        'searchFormContainer',
     ];
 
     static values = {
         appConfig: Object,
+        geneWindowId: String,
+        searchFormId: String,
     };
-
-    static outlets = ['enzymefunctioninitiative--gnd-viewer-bundle--gnd-gene-window', 'enzymefunctioninitiative--gnd-viewer-bundle--gnd-search-form'];
 
     dataset = null;
 
@@ -67,6 +70,28 @@ export default class GndAppController extends Controller {
         this.numBatchesRetrieved = 0;
 
         this.config = this.parseOptions(this.appConfigValue);
+
+        setTimeout(() => {
+            this.initializeOutlets();
+        }, 1);
+    }
+
+    initializeOutlets() {
+        this.geneWindowOutlet = Util.findController(
+            this.application,
+            this.geneWindowIdValue,
+            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-gene-window'
+        );
+
+        this.searchFormOutlet = Util.findController(
+            this.application,
+            this.searchFormIdValue,
+            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-search-form'
+        );
+
+        if (this.geneWindowOutlet) {
+            this.checkForImmediateSearch();
+        }
     }
 
     parseOptions(options) {
@@ -86,7 +111,7 @@ export default class GndAppController extends Controller {
     }
 
     // Wait until the gene window controller is connected before doing an automatic search
-    efiGndViewerBundleGndGeneWindowOutletConnected() {
+    checkForImmediateSearch() {
         if (!this.config.sequence.unirefId.length && !this.config.search.clusterOnLoad)
             return;
 
@@ -285,7 +310,7 @@ export default class GndAppController extends Controller {
     // ----- Helpers -----
 
     getWindowSize() {
-        return this.efiGndViewerBundleGndGeneWindowOutlet.getWindowSize();
+        return this.geneWindowOutlet?.getWindowSize() ?? Constants.DEFAULT_WINDOW_SIZE;
     }
 
     getDatabaseSequenceVersion(databaseVersion) {
@@ -305,7 +330,7 @@ export default class GndAppController extends Controller {
         if (this.config.search.clusterOnLoad) {
             retrievalParams.query = this.config.search.clusterOnLoad;
         }
-        const seqVersion = this.efiGndViewerBundleGndSearchFormOutlet.getSequenceVersion();
+        const seqVersion = this.searchFormOutlet.getSequenceVersion();
         retrievalParams.requestedSequenceVersion = seqVersion;
     }
 
@@ -334,7 +359,7 @@ export default class GndAppController extends Controller {
     }
 
     handleSuccess() {
-        let seqVersion = this.efiGndViewerBundleGndSearchFormOutlet.getSequenceVersion();
+        let seqVersion = this.searchFormOutlet.getSequenceVersion();
         seqVersion = (seqVersion === Constants.UNIREF50 ? 'UniRef50' : (seqVersion === Constants.UNIREF90 ? 'UniRef90' : 'UniProt'));
         this.handleFooterUpdate(`Showing ${this.numGndsRetrieved} of ${this.totalRecords} ${seqVersion} diagrams`, ['text-danger'], 'text-muted');
     }

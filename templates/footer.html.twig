@@ -13,8 +13,8 @@
         </div>
 
         <div id="footer-actions" {{ stimulus_target(gnd.app, 'footerActions') }} class="d-none">
-            <button id="show-more-btn" class="btn btn-secondary btn-sm ms-2" data-action="click->gnd-app#showMore">Show {{ app_config.batchSize * app_config.setSize }} more</button>
-            <button id="show-all-btn" class="btn btn-secondary btn-sm ms-2" data-action="click->gnd-app#showAll">Show all</button>
+            <button id="show-more-btn" class="btn btn-secondary btn-sm ms-2" data-action="click->{{ gnd.app }}#showMore">Show {{ app_config.batchSize * app_config.setSize }} more</button>
+            <button id="show-all-btn" class="btn btn-secondary btn-sm ms-2" data-action="click->{{ gnd.app }}#showAll">Show all</button>
         </div>
 
     </div>

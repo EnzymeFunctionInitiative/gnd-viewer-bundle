@@ -4,23 +4,16 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a51b26c29182439de35f5aa5c357b568",
+    "content-hash": "d53f3304a1f511bcc596b46f2ff3fdca",
     "packages": [
         {
             "name": "enzymefunctioninitiative/efi-gnd-lib",
             "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/EnzymeFunctionInitiative/efi-gnd-lib.git",
+            "dist": {
+                "type": "path",
+                "url": "***REMOVED***",
                 "reference": "9c55c7fb8b744cde95a1ae60926335294ed86956"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/EnzymeFunctionInitiative/efi-gnd-lib/zipball/9c55c7fb8b744cde95a1ae60926335294ed86956",
-                "reference": "9c55c7fb8b744cde95a1ae60926335294ed86956",
-                "shasum": ""
-            },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -37,11 +30,9 @@
                 }
             ],
             "description": "Library for reading EFI Genome Neighborhood Diagram files from PHP",
-            "support": {
-                "source": "https://github.com/EnzymeFunctionInitiative/efi-gnd-lib/tree/main",
-                "issues": "https://github.com/EnzymeFunctionInitiative/efi-gnd-lib/issues"
-            },
-            "time": "2025-12-16T20:41:24+00:00"
+            "transport-options": {
+                "relative": false
+            }
         }
     ],
     "packages-dev": [],

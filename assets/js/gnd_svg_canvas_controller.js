@@ -1,16 +1,32 @@
 import { Controller } from '@hotwired/stimulus';
-import Constants from '../js/gnd/constants.js';
-import GndRenderer from '../js/gnd/renderer.js';
-import GndUnirefInfo from '../js/gnd/uniref_info.js';
+import Constants from './gnd/constants.js';
+import GndRenderer from './gnd/renderer.js';
+import GndUnirefInfo from './gnd/uniref_info.js';
+import Util from './gnd/util.js';
 
 export default class GndSvgCanvasController extends Controller {
+
+    static values = {
+        mainAppId: String,
+    };
 
     // Keep track of which arrows are highlighted
     highlightedFamilies = new Set();
 
     connect() {
-        this.renderer = new GndRenderer(this.element);
+        this.renderer = new GndRenderer(this.element, 'enzymefunctioninitiative--gnd-viewer-bundle--gnd-svg-canvas');
         this.diagramCount = 0;
+        setTimeout(() => {
+            this.initializeOutlets();
+        }, 0);
+    }
+
+    initializeOutlets() {
+        this.mainAppOutlet = Util.findController(
+            this.application,
+            this.mainAppIdValue,
+            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-app'
+        );
     }
 
     disconnect() {
@@ -20,6 +36,10 @@ export default class GndSvgCanvasController extends Controller {
 
 
     // ----- PUBLIC ACTIONS CALLED BY OTHER CONTROLLERS THROUGH OUTLETS ----- 
+
+    getVerticalOffset() {
+        return this.renderer.getVerticalOffset();
+    }
 
     /**
      * Toggle the highlight of all arrows that match the given family ID.  This process is
@@ -157,15 +177,20 @@ export default class GndSvgCanvasController extends Controller {
 
     // --- EVENT HANDLERS & DISPATCHERS ---
 
+    getFromDataStore(arrowId) {
+        return this.mainAppOutlet.getFromDataStore(arrowId);
+    }
+
     handleArrowClick(event) {
         const arrowId = event.params.id;
+        const data = this.getFromDataStore(arrowId);
 
         const popupPos = this.renderer.computeInfoPopupPosition(event.currentTarget);
-        const dispatchData = { detail: { arrowId: arrowId, ctrlKey: event.ctrlKey, altKey: event.altKey, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global' };
+        const dispatchData = { detail: { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global', bubbles: true };
 
         if (event.ctrlKey || event.altKey) {
             // Get all of the family IDs that this arrow belongs to
-            const familyIds = this.arrowFamilyMap.get(arrowId);
+            const familyIds = this.renderer.getFamilyIdsForArrow(arrowId);
             if (familyIds) {
                 // If any of the families that are associated with the current arrow are
                 // highlighted, then turn off all of the families.
@@ -188,11 +213,10 @@ export default class GndSvgCanvasController extends Controller {
         this.dispatch('arrowClick', dispatchData);
     }
 
-    //handleArrowMouseOver(event, arrowElement) {
     handleArrowMouseOver(event) {
-        const arrowId = event.params.id;
+        const data = this.getFromDataStore(event.params.id);
         const popupPos = this.renderer.computeInfoPopupPosition(event.currentTarget);
-        this.dispatch('arrowMouseOver', { detail: { arrowId, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global' });
+        this.dispatch('arrowMouseOver', { detail: { data, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global' });
     }
 
     handleArrowMouseOut(event) {
