@@ -60,6 +60,10 @@ export default class GndRenderer {
         return this.swissprotArrows.size > 0;
     }
 
+    getVerticalOffset() {
+        return this.topCanvasPadding;
+    }
+
 
 
 
@@ -94,7 +98,7 @@ export default class GndRenderer {
             return;
 
         const arrowElements = this.familyArrowMap.get(familyId);
-        const clearSet = new Set(arrowElements);
+        let clearSet = new Set(arrowElements);
 
         for (const familyId of highlightedFamilies) {
             const familyArrows = this.familyArrowMap.get(familyId);
@@ -150,6 +154,10 @@ export default class GndRenderer {
 
     disableFilterOverlay() {
         this.element.classList.remove('canvas-filter-active');
+    }
+
+    getFamilyIdsForArrow(arrowId) {
+        return this.arrowFamilyMap.get(arrowId);
     }
 
 

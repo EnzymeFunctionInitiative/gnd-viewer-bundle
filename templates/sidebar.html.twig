@@ -1,10 +1,12 @@
 
+{% set filter_name = gnd.filter|replace({'/': '--', '_': '-'}) %}
+
 <aside class="sidebar p-3 bg-dark text-light border-right border-black">
     {% if app_config.sequence.unirefId != '' %}
     <div class="d-none">
     {% endif %}
         <h4><i class="bi bi-search"></i> Search</h4>
-        <div
+        <div id="{{ gnd.search_form_container_id }}"
             {{ stimulus_controller(gnd.search) }}
             {{ stimulus_action(gnd.search, 'finishedBatchRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.search, 'invalidSearch', gnd.app ~ ':invalidSearch@window') }}
         >
@@ -16,7 +18,7 @@
                             <i class="bi bi-info-circle" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="bottom" title="UniRef options decrease the number of nodes that are displayed by grouping sequences together at a 50% and/or 90% sequence percent identity, depending on job options."></i>
                         </div>
                         <div class="btn-group mb-3" role="group" aria-label="UniRef toggle options">
-                            {% if base_sequence_version == 'uniref50' %}
+                            {% if app_config.sequence.databaseVersion == 'uniref50' %}
                                 <input type="radio" class="btn-check" name="uniref-toggle" id="uniref-toggle-uniref50" autocomplete="off" value="uniref50" {{ app_config.sequence.requestedVersion == 'uniref50' ? 'checked' : '' }}>
                                 <label class="btn btn-sm btn-light" for="uniref-toggle-uniref50">UniRef50</label>
                             {% endif %}
@@ -50,10 +52,9 @@
     {% endif %}
     <h4><i class="bi bi-funnel-fill"></i> Filtering</h4>
     <div id="gnd-filter-container"
-        {{ stimulus_controller(gnd.filter, {}, {
-            (gnd.canvas): "[data-controller='#{gnd.canvas|replace({'/': '--'})}']"
-        }) }}
-        {{ stimulus_action(gnd.filter, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(gnd.filter, 'finishRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.filter, 'initializeUi', gnd.app ~ ':initializeApp@window') }}
+        {{ stimulus_controller(gnd.filter) }}
+        data-{{ filter_name }}-svg-canvas-id-value="{{ gnd.svg_canvas_container_id }}"
+        {{ stimulus_action(gnd.filter, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(gnd.filter, 'finishRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.filter, 'initializeUi', gnd.app ~ ':initializeApp@window')|stimulus_action(gnd.filter, 'newDiagrams', gnd.app ~ ':newDiagrams@window') }}
     >
         <fieldset {{ stimulus_target(gnd.filter, 'fieldset') }}>
             <div>
@@ -74,7 +75,6 @@
                         </h2>
                         <div id="pfamFamilyListAccordion" class="accordion-collapse collapse" data-bs-parent="#familyFilterAccordion">
                             <div id="pfamFamilyList" class="accordion-body m-0 p-2 text-bg-dark" {{ stimulus_target(gnd.filter, 'pfamFamilyList') }}></div>
-                            </div>
                         </div>
                     </div>
                     <div class="accordion-item border-secondary">
@@ -104,9 +104,9 @@
     </div>
     <hr>
     <h4><i class="bi bi-arrows-fullscreen"></i> Genome Window</h4>
-    <div id="gnd-window-container"
+    <div id="{{ gnd.gene_window_container_id }}"
         {{ stimulus_controller(gnd.window) }}
-        {{ stimulus_action(gnd.window, 'initializeApp', gnd.app ~ 'initializeApp@window') }}
+        {{ stimulus_action(gnd.window, 'initializeApp', gnd.app ~ ':initializeApp@window') }}
     >
         <div class="my-1">
             Window size: <select class="w-auto mx-2" id="gnd-window-size"

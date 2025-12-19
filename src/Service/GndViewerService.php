@@ -75,13 +75,17 @@ final class GndViewerService implements GndViewerInterface
     {
         $dbVersion = $this->gndReader->getMetadata()->sequenceVersion;
 
-        if ($requestedVersion === SequenceVersion::UniRef50 && $dbVersion === SequenceVersion::UniRef50) {
+        if ($dbVersion === SequenceVersion::UniRef50 && ($requestedVersion === SequenceVersion::UniRef50 || $requestedVersion === SequenceVersion::UniRef90 || $requestedVersion === SequenceVersion::UniProt)) {
             return true;
         }
 
-        if ($requestedVersion === SequenceVersion::UniRef90 && ($dbVersion === SequenceVersion::UniRef50 || $dbVersion === SequenceVersion::UniRef90)) {
+        if ($dbVersion === SequenceVersion::UniRef90 && ($requestedVersion === SequenceVersion::UniRef90 || $requestedVersion === SequenceVersion::UniProt)) {
             return true;
         }
+
+        if ($dbVersion === SequenceVersion::UniProt && $requestedVersion === SequenceVersion::UniProt) {
+            return true;
+        } 
 
         return false;
     }

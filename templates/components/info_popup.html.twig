@@ -1,10 +1,12 @@
 
 {% set infoPopup = 'enzymefunctioninitiative/gnd-viewer-bundle/gnd-info-popup' %}
+{% set popup_name = infoPopup|replace({'/': '--', '_': '-'}) %}
 
 <div class="position-absolute p-0 border border-secondary rounded border-2 bg-light d-none info-popup"
     {{ stimulus_controller(infoPopup, {
         'metadata-url':  metadata_url|default("")
     }) }}
+    data-{{ popup_name }}-canvas-id-value="{{ gnd.svg_canvas_container_id|default("") }}"
     {{ stimulus_action(infoPopup, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(infoPopup, 'handleArrowOver', 'efi-gnd-global:arrowMouseOver@window')|stimulus_action(infoPopup, 'handleArrowOut', 'efi-gnd-global:arrowMouseOut@window') }}
 >
     <div class="d-flex align-items-center border-bottom">

@@ -1,5 +1,6 @@
 
 {% set efi = 'enzymefunctioninitiative/gnd-viewer-bundle' %}
+
 {% set gnd = {
     'app':          efi ~ '/gnd_app',
     'filter':       efi ~ '/gnd_filter',
@@ -7,10 +8,14 @@
     'info_popup':   efi ~ '/gnd_info_popup',
     'loading':      efi ~ '/gnd_loading',
     'search':       efi ~ '/gnd_search_form',
-    'canvas':       efi ~ '/gnd_svg_canvas'
+    'canvas':       efi ~ '/gnd_svg_canvas',
+    'gene_window_container_id':     'gene-window-container',
+    'search_form_container_id':     'search-form-container',
+    'svg_canvas_container_id':      'svg-canvas-container',
+    'main_app_container_id':        'main-app-container',
 } %}
 
-<link rel="stylesheet" href="{{ asset('@enzymefunctioniniative/gnd-viewer-bundle/styles/gnd.css') }}">
+<link rel="stylesheet" href="{{ asset('@enzymefunctioninitiative/gnd-viewer-bundle/styles/gnd.css') }}">
 
 {% set app_config = {
     batchSize: params.gnd_batch_size,
@@ -32,11 +37,12 @@
     }
 } %}
 
-<div
-    {{ stimulus_controller(gnd.app, { 'app-config': app_config }, {
-         (gnd.window): "[data-controller='#{gnd.window|replace({'/': '--'})}']",
-         (gnd.search): "[data-controller='#{gnd.search|replace({'/': '--'})}']"
-    }) }}
+{% set app_name = gnd.app|replace({'/': '--', '_': '-'}) %}
+
+<div id="{{ gnd.main_app_container_id }}"
+    {{ stimulus_controller(gnd.app, { 'app-config': app_config }) }}
+    data-{{ app_name }}-gene-window-id-value="{{ gnd.gene_window_container_id }}"
+    data-{{ app_name }}-search-form-id-value="{{ gnd.search_form_container_id }}"
     {{ stimulus_action(gnd.app, 'loadFromSearch', gnd.search ~ ':submitSearch@window')|stimulus_action(gnd.app, 'retrieveAndRenderNextSet', gnd.canvas ~ ':batchRenderComplete@window')|stimulus_action(gnd.app, 'updateWindowSize', gnd.window ~ ':updateWindowSize@window') }}
     >
 
