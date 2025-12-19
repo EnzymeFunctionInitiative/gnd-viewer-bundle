@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "name": "@enzymefunctioninitiative/gnd-viewer-bundle",
+=======
+    "name": "@enzymefunctioniniative/gnd-viewer-bundle",
+>>>>>>> e3ec5cef42327cccfca4c1a70eddd1aaf5d4bf69
     "symfony": {
         "controllers": {
             "gnd_app": {
@@ -7,7 +11,11 @@
                 "fetch": "eager",
                 "enabled": true,
                 "autoimport": {
+<<<<<<< HEAD
                     "@enzymefunctioninitiative/gnd-viewer-bundle/styles/gnd.css": true
+=======
+                    "@efi/gnd-viewer-bundle/styles/gnd.css": true
+>>>>>>> e3ec5cef42327cccfca4c1a70eddd1aaf5d4bf69
                 }
             },
             "gnd_single_gnd": {
@@ -15,7 +23,11 @@
                 "fetch": "eager",
                 "enabled": true,
                 "autoimport": {
+<<<<<<< HEAD
                     "@enzymefunctioninitiative/gnd-viewer-bundle/styles/gnd.css": true
+=======
+                    "@efi/gnd-viewer-bundle/styles/gnd.css": true
+>>>>>>> e3ec5cef42327cccfca4c1a70eddd1aaf5d4bf69
                 }
             },
             "gnd_filter": {

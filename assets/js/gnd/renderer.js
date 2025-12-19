@@ -66,7 +66,6 @@ export default class GndRenderer {
 
 
 
-
     // ----- PUBLIC FILTER AND HIGHLIGHTING METHODS -----
 
     /**
@@ -159,7 +158,6 @@ export default class GndRenderer {
     getFamilyIdsForArrow(arrowId) {
         return this.arrowFamilyMap.get(arrowId);
     }
-
 
     // ----- PRIVATE FUNCTIONS AND RENDERING LOGIC -----
 
