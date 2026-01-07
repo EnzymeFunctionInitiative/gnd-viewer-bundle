@@ -4,7 +4,10 @@
     <div class="container-fluid d-flex justify-content-between align-items-center h-100 px-3">
 
         <div id="footer-status-container">
-            <span id="footer-message" class="text-muted" {{ stimulus_target(gnd.app, 'footerMessage') }}>Ready.</span>
+            <div id="footer-message-container">
+                <div id="footer-message" class="text-muted" {{ stimulus_target(gnd.app, 'footerMessage') }}>Ready.</div>
+                <div id="footer-highlight-count" class="text-muted d-none" {{ stimulus_target(gnd.app, 'footerHighlightCount') }}></div>
+            </div>
             <div id="footer-progress-container" class="d-none" style="min-width: 250px;" {{ stimulus_target(gnd.app, 'footerProgressContainer') }}>
                 <div class="progress" role="progressbar" style="height: 12px;">
                     <div id="footer-progress-bar" class="progress-bar " style="width: 0%" {{ stimulus_target(gnd.app, 'footerProgressBar') }}></div>

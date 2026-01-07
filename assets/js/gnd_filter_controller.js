@@ -105,6 +105,7 @@ export default class GndFilterController extends Controller {
 
     toggleSwissProt(event) {
         this.svgCanvasOutlet.toggleSwissProts(event.target.checked);
+        this.updateSelectionStats();
     }
 
     /**
@@ -140,6 +141,7 @@ export default class GndFilterController extends Controller {
         this.resetFamilySearch();
         this.resetFamilyCheckboxes();
         this.updateLegend();
+        this.updateSelectionStats();
 
         if (clearSearchQuery)
             this.searchInputTarget.value = '';
@@ -170,6 +172,7 @@ export default class GndFilterController extends Controller {
             });
 
             this.updateLegend();
+            this.updateSelectionStats();
         }
     }
 
@@ -284,6 +287,14 @@ export default class GndFilterController extends Controller {
     }
 
     /**
+     * Update the text box that shows the number of arrows that were selected.
+     */
+    updateSelectionStats() {
+        const numArrowsSelected = this.svgCanvasOutlet.getHighlightedGndCount();
+        this.dispatch('arrowHighlightCountUpdated', { detail: { numArrowsSelected }, prefix: 'efi-gnd-global' });
+    }
+
+    /**
      * Create a checkbox element that represents the family and return it.
      * @returns {dom element} representing a div containing the checkbox
      */
@@ -321,6 +332,7 @@ export default class GndFilterController extends Controller {
         this.svgCanvasOutlet.toggleFamily(familyId, isChecked);
         this.updateLegendFamilyIds(familyId, isChecked);
         this.updateLegend();
+        this.updateSelectionStats();
     }
 
     toggleAndUpdateCheckbox(familyId, isChecked) {

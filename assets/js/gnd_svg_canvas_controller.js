@@ -13,6 +13,8 @@ export default class GndSvgCanvasController extends Controller {
     // Keep track of which arrows are highlighted
     highlightedFamilies = new Set();
 
+    canvasReady = false;
+
     connect() {
         this.renderer = new GndRenderer(this.element, 'enzymefunctioninitiative--gnd-viewer-bundle--gnd-svg-canvas');
         this.diagramCount = 0;
@@ -68,6 +70,10 @@ export default class GndSvgCanvasController extends Controller {
         }
     }
 
+    getHighlightedGndCount() {
+        return this.renderer.getHighlightedGndCount();
+    }
+
     /**
      * Toggle highlighting of arrows with SwissProt annotations.  If the toggle is turned off and
      * families were previously highlighted, then that highlighting will return.
@@ -104,6 +110,7 @@ export default class GndSvgCanvasController extends Controller {
         this.clearCanvas();
         this.unirefInfo = new GndUnirefInfo(useUniref, unirefVersion, childUnirefVersion);
         this.renderer.initializeCanvas(this.unirefInfo);
+        this.canvasReady = false;
     }
 
     /**
@@ -131,6 +138,7 @@ export default class GndSvgCanvasController extends Controller {
     finalizeRender() {
         // The retrieval of all batches is done rendering so draw the legend
         this.renderer.drawLegend(this.diagramCount);
+        this.canvasReady = true;
     }
 
     /**
@@ -182,6 +190,9 @@ export default class GndSvgCanvasController extends Controller {
     }
 
     handleArrowClick(event) {
+        if (!this.canvasReady)
+            return;
+
         const arrowId = event.params.id;
         const data = this.getFromDataStore(arrowId);
 
