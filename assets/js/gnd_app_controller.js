@@ -43,6 +43,7 @@ export default class GndAppController extends Controller {
     static targets = [
         'footerActions',
         'footerMessage',
+        'footerHighlightCount',
         'footerProgressContainer',
         'footerProgressBar',
         'metadataContainer',
@@ -306,6 +307,16 @@ export default class GndAppController extends Controller {
         this.performSearch(retrievalParams);
     }
 
+    arrowHighlightCountUpdated({ detail: { numArrowsSelected } }) {
+        if (numArrowsSelected === 0) {
+            this.footerHighlightCountTarget.classList.add('d-none');
+            this.footerHighlightCountTarget.textContent = '';
+        } else {
+            this.footerHighlightCountTarget.classList.remove('d-none');
+            this.footerHighlightCountTarget.textContent = `Number of Diagrams with Selected Families: ${numArrowsSelected}`;
+        }
+    }
+
 
     // ----- Helpers -----
 
@@ -354,6 +365,7 @@ export default class GndAppController extends Controller {
     enterLoadingState() {
         this.footerActionsTarget.classList.add('d-none');
         this.footerMessageTarget.classList.add('d-none');
+        this.footerHighlightCountTarget.classList.add('d-none');
         this.footerProgressContainerTarget.classList.remove('d-none');
         this.updateProgressBar(0);
     }

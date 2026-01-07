@@ -64,6 +64,19 @@ export default class GndRenderer {
         return this.topCanvasPadding;
     }
 
+    /**
+     * Return the number of GNDs with one or more highlighted arrows.
+     */
+    getHighlightedGndCount() {
+        const allHighlighted = this.element.querySelectorAll('.highlighted');
+        // An individual GND has a top-level group and groups for each protein, but the styles are
+        // added to the polygons representing the proteins
+        const queryWithHighlighted = new Set(
+            Array.from(allHighlighted).map(poly => poly.parentNode.parentNode.dataset.queryArrowId)
+        );
+        return queryWithHighlighted.size;
+    }
+
 
 
     // ----- PUBLIC FILTER AND HIGHLIGHTING METHODS -----
@@ -109,6 +122,9 @@ export default class GndRenderer {
         }
     }
 
+    /**
+     * Highlight all of the arrows with SwissProts annotations.
+     */
     highlightSwissprotArrows() {
         this.addArrowHighlights(this.swissprotArrows);
     }
@@ -123,7 +139,7 @@ export default class GndRenderer {
 
     /**
      * Given a list of family IDs, highlight all arrows that belong to each family, and dispatch an
-     * event indicating which families were clicked.
+     * event indicating which families were clicked.  Use when toggling arrows off with SwissProts.
      * @param {Set} familyIds - set of family IDs
      */
     highlightArrowsByFamilies(familyIds) {
@@ -140,7 +156,7 @@ export default class GndRenderer {
     }
 
     /**
-     * Remove the highlights from any highlighted elements.
+     * Remove the highlights from any highlighted elements, but don't remove families from the.
      */
     removeHighlights() {
         const highlighted = this.element.querySelectorAll('.highlighted');;
@@ -188,7 +204,7 @@ export default class GndRenderer {
     drawDiagram(index, diagramData) {
         const yPos = this._calculateYpos(index);
         const group = this.snap.group();
-        group.attr({ id: `diagram-group-${index}` });
+        group.attr({ id: `diagram-group-${index}`, 'data-query-arrow-id': diagramData.Query.Id });
 
         let minXpct = 1.1, maxXpct = -0.1;
 
