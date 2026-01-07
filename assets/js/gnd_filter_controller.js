@@ -349,7 +349,10 @@ export default class GndFilterController extends Controller {
     }
 
     updateCheckbox(familyId, isChecked) {
-        this.familyCheckboxMap.get(familyId.toUpperCase()).checked = isChecked;
+        const checkbox = this.familyCheckboxMap.get(familyId?.toUpperCase());
+        if (checkbox) {
+            checkbox.checked = isChecked;
+        }
     }
 }
 
