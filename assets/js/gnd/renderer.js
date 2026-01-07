@@ -60,10 +60,6 @@ export default class GndRenderer {
         return this.swissprotArrows.size > 0;
     }
 
-    getVerticalOffset() {
-        return this.topCanvasPadding;
-    }
-
     /**
      * Return the number of GNDs with one or more highlighted arrows.
      */
@@ -727,21 +723,33 @@ export default class GndRenderer {
         this.ORIENT_SAME_DIR = true;
     }
 
+    computeUpperY(targetElement) {
+        const elem = Snap(targetElement);
+        const bbox = elem.getBBox();
+        const matrix = elem.transform().globalMatrix;
+        const upperY = matrix.y(bbox.x, bbox.y)
+        return upperY;
+    }
+
+    computeLeftX(targetElement) {
+        const elem = Snap(targetElement);
+        const bbox = elem.getBBox();
+        const matrix = elem.transform().globalMatrix;
+        const centerX = matrix.x(bbox.x, bbox.y)
+        return centerX;
+    }
+
 
     // ----- PUBLIC POSITION METHODS -----
 
-    computeInfoPopupPosition(targetElement) {
-        const arrowElement = Snap(targetElement);
+    computeInfoPopupRelativePosition(targetElement) {
+        const gndGroupY = this.computeUpperY(targetElement.parentNode);
+        const arrowLeftX = this.computeLeftX(targetElement);
 
-        // Get the bounding box for the arrow, before transformation
-        const bbox = arrowElement.getBBox();
-        // Get the transformation matrix for the arrow
-        const matrix = arrowElement.transform().globalMatrix;
+        const upperY = gndGroupY;
+        const lowerY = gndGroupY + this.diagramHeight;
 
-        const centerX = matrix.x(bbox.cx, bbox.cy);
-        const lowerRightY = matrix.y(bbox.x2, bbox.y2) + this.ARROW_HEIGHT + 12;
-
-        return { x: centerX, y: lowerRightY };
+        return { x: arrowLeftX, gndLowerY: lowerY, gndUpperY: upperY };
     }
 
     /**
@@ -752,7 +760,6 @@ export default class GndRenderer {
         const canvasRect = this.element.getBoundingClientRect();
         return canvasRect.right - canvasRect.left;
     }
-
 
     // ----- Private highlighting helpers -----
     
