@@ -39,15 +39,15 @@ export default class GndSingleGndController extends Controller {
 
     handleArrowClick(event) {
         const data = this.getFromDataStore(event.params.id);
-        const { x, y } = this.getArrowPosition(event.currentTarget);
-        const dispatchData = { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: x, y: y };
+        const { x, gndLowerY, gndUpperY } = this.getArrowPosition(event.currentTarget);
+        const dispatchData = { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x, gndLowerY, gndUpperY };
         this.dispatch('arrowClick', { prefix: 'efi-gnd-global', detail: dispatchData, openPopup: true, bubbles: true });
     }
 
     handleArrowMouseOver(event) {
         const data = this.getFromDataStore(event.params.id);
-        const { x, y } = this.getArrowPosition(event.currentTarget);
-        this.dispatch('arrowMouseOver', { prefix: 'efi-gnd-global', detail: { data, x: x, y: y }, bubbles: true });
+        const { x, gndLowerY, gndUpperY } = this.getArrowPosition(event.currentTarget);
+        this.dispatch('arrowMouseOver', { prefix: 'efi-gnd-global', detail: { data, x, gndLowerY, gndUpperY }, bubbles: true });
     }
 
     handleArrowMouseOut(event) {
@@ -55,10 +55,11 @@ export default class GndSingleGndController extends Controller {
     }
 
     getArrowPosition(targetArrow) {
-        const popupPos = this.renderer.computeInfoPopupPosition(targetArrow);
+        const popupPos = this.renderer.computeInfoPopupRelativePosition(targetArrow);
         const svgPos = this.element.getBoundingClientRect();
         const x = popupPos.x + svgPos.left;
-        const y = popupPos.y + svgPos.top + window.scrollY;
-        return { x, y };
+        const gndLowerY = popupPos.gndLowerY + svgPos.top + window.scrollY;
+        const gndUpperY = popupPos.gndUpperY + svgPos.top + window.scrollY;
+        return { x, gndLowerY, gndUpperY };
     }
 }

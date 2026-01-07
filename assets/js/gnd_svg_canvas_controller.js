@@ -39,10 +39,6 @@ export default class GndSvgCanvasController extends Controller {
 
     // ----- PUBLIC ACTIONS CALLED BY OTHER CONTROLLERS THROUGH OUTLETS ----- 
 
-    getVerticalOffset() {
-        return this.renderer.getVerticalOffset();
-    }
-
     /**
      * Toggle the highlight of all arrows that match the given family ID.  This process is
      * additive, meaning that any families that are already highlighted will continue to be
@@ -196,8 +192,8 @@ export default class GndSvgCanvasController extends Controller {
         const arrowId = event.params.id;
         const data = this.getFromDataStore(arrowId);
 
-        const popupPos = this.renderer.computeInfoPopupPosition(event.currentTarget);
-        const dispatchData = { detail: { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global', bubbles: true };
+        const popupPos = this.getPopupPosition(event.currentTarget);
+        const dispatchData = { detail: { data, ctrlKey: event.ctrlKey, altKey: event.altKey, x: popupPos.x, gndLowerY: popupPos.gndLowerY, gndUpperY: popupPos.gndUpperY }, prefix: 'efi-gnd-global', bubbles: true };
 
         if (event.ctrlKey || event.altKey) {
             // Get all of the family IDs that this arrow belongs to
@@ -226,12 +222,18 @@ export default class GndSvgCanvasController extends Controller {
 
     handleArrowMouseOver(event) {
         const data = this.getFromDataStore(event.params.id);
-        const popupPos = this.renderer.computeInfoPopupPosition(event.currentTarget);
-        this.dispatch('arrowMouseOver', { detail: { data, x: popupPos.x, y: popupPos.y }, prefix: 'efi-gnd-global' });
+        const popupPos = this.getPopupPosition(event.currentTarget);
+        this.dispatch('arrowMouseOver', { detail: { data, x: popupPos.x, gndLowerY: popupPos.gndLowerY, gndUpperY: popupPos.gndUpperY }, prefix: 'efi-gnd-global' });
     }
 
     handleArrowMouseOut(event) {
         this.dispatch('arrowMouseOut', { detail: {}, prefix: 'efi-gnd-global' });
+    }
+
+    getPopupPosition(arrowTarget) {
+        const relativePos = this.renderer.computeInfoPopupRelativePosition(arrowTarget);
+        const rect = this.element.getBoundingClientRect();
+        return { x: rect.left + relativePos.x, gndLowerY: rect.top + relativePos.gndLowerY, gndUpperY: rect.top + relativePos.gndUpperY };
     }
 }
 

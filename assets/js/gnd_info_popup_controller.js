@@ -25,28 +25,13 @@ export default class GndInfoPopupController extends Controller {
         this.timeoutId = null;
         this.currentData = null;
         this.keepPopupOpen = false;
-        this.canvasWidth = window.innerWidth;
-        this.diagramHeight = 80;
+        this.canvasWidth = document.documentElement.clientWidth;
         setTimeout(() => {
             this.initializeOutlets();
         }, 0);
     }
 
     initializeOutlets() {
-        this.svgCanvasOutlet = Util.findController(
-            this.application,
-            this.canvasIdValue,
-            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-svg-canvas'
-        );
-        this.verticalOffset = null;
-    }
-
-    getVerticalOffset() {
-        if (this.verticalOffset === null) {
-            this.verticalOffset = this.svgCanvasOutlet?.getVerticalOffset() ?? 0;
-            console.log(this.verticalOffset);
-        }
-        return this.verticalOffset;
     }
 
     disconnect() {
@@ -55,7 +40,7 @@ export default class GndInfoPopupController extends Controller {
         }
     }
 
-    handleArrowOver({ detail: { data, x, y } }) {
+    handleArrowOver({ detail: { data, x, gndLowerY, gndUpperY } }) {
         if (typeof this.timeoutId === 'number') {
             clearTimeout(this.timeoutId);
         }
@@ -63,7 +48,7 @@ export default class GndInfoPopupController extends Controller {
         this.timeoutId = setTimeout(() => {
             this.populatePopup(data);
             this.element.classList.remove('d-none');
-            this.setPosition(x, y);
+            this.setPosition(x, gndLowerY, gndUpperY);
             this.keepPopupOpen = false;
         }, 100);
     }
@@ -78,11 +63,11 @@ export default class GndInfoPopupController extends Controller {
         this.element.classList.add('d-none');
     }
 
-    handleArrowClick({ detail: { data, ctrlKey, altKey, x, y }}) {
+    handleArrowClick({ detail: { data, ctrlKey, altKey, x, gndLowerY, gndUpperY }}) {
         if (!ctrlKey && !altKey) {
             this.keepPopupOpen = true;
 		    this.populatePopup(data);
-		    this.setPosition(x, y);
+		    this.setPosition(x, gndLowerY, gndUpperY);
             this.currentData = data;
         }
     }
@@ -97,25 +82,31 @@ export default class GndInfoPopupController extends Controller {
         this.statusTarget.innerText = data.IsSwissProt ? 'SwissProt' : 'TrEMBL';
     }
 
-	setPosition(x, y) {
-        const offsetX = 25;
+    /**
+     * @param {float} gndLowerY - the vertical position of the top of the dialog. If this goes below the window
+     *     then gndUpperY is used instead for the vertical position of the bottom of the dialog
+     * @param {float} gndUpperY - vertical position of the bottom of the dialog
+     */
+	setPosition(x, gndLowerY, gndUpperY) {
+        console.log(`${x} ${gndLowerY} ${gndUpperY}`);
+        const offsetX = 20;
 
         const popupWidth = this.element.offsetWidth;
         const popupHeight = this.element.offsetHeight;
         
         // Calculate the coordinates of the viewport edges relative to the document
-        const rightEdge = this.canvasWidth - window.scrollX;
+        const rightEdge = this.canvasWidth - window.scrollX - offsetX;
         const bottomEdge = window.scrollY + window.innerHeight;
 
         // Calculate preferred horizontal position
-        let newLeft = x + offsetX;
+        let newLeft = x;
 
         // Check and correct for edge overflow
 
         // If the popup's right side would be past the viewport's right edge position it to
         // the left of the position instead
-        if (newLeft + popupWidth + (offsetX / 2) > rightEdge) {
-            newLeft = rightEdge - popupWidth - offsetX;
+        if (newLeft + popupWidth > rightEdge) {
+            newLeft = rightEdge - popupWidth;
         }
 
         // If the popup's left side would be past the viewport's left edge then clamp its
@@ -124,9 +115,9 @@ export default class GndInfoPopupController extends Controller {
             newLeft = offsetX;
         }
 
-        let newTop = y + this.getVerticalOffset();
+        let newTop = gndLowerY;
         if (newTop + popupHeight > bottomEdge) {
-            newTop = y - popupHeight - this.diagramHeight;
+            newTop = gndUpperY - popupHeight;
         }
 
         this.element.style.left = `${newLeft}px`;
