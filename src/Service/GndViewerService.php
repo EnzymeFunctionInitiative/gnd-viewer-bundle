@@ -6,6 +6,7 @@ use Efi\Gnd\Dto\GndMetadata;
 use Efi\Gnd\Enum\SequenceVersion;
 use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\GndViewerBundle\Dto\GndRequestParams;
+use Efi\GndViewerBundle\Dto\QueryInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -106,6 +107,37 @@ final class GndViewerService implements GndViewerInterface
         $results = $this->gndReader->retrieveRanges($range, $params->toGndQueryParams());
 
         return $results;
+    }
+
+    public function getViewerParameters(GndViewerInterface $gndReader, QueryInterface $query, int $jobId, string $jobKey, array $appParams): array
+    {
+        $metadata = $gndReader->getMetadata();
+        $dbSequenceVersion = $metadata->sequenceVersion->value;
+        $searchFirstClusterOnLoad = ($metadata->numClusters === 1 && $metadata->firstClusterNum !== null) ? $metadata->firstClusterNum : null;
+
+        $params = [
+            'job_id' => $jobId,
+            'job_key' => $jobKey,
+            'gnd_batch_size' => $appParams['batch_size'],
+            'gnd_set_size' => $appParams['set_size'],
+            'gnd_job_name' => $metadata->jobName,
+            'gnd_cooccurrence' => $metadata->cooccurrence,
+            'gnd_nb_size' => $metadata->neighborhoodSize,
+            'base_sequence_version' => $dbSequenceVersion,
+            'current_sequence_version' => $query->get('seq-ver') ?? $dbSequenceVersion,
+            'uniref_id' => $query->get('uniref-id') ?? '',
+            'metadata_url' => $appParams['metadata_url'] ?? '',
+            'api_gnd_search' => $appParams['api_gnd_search_url'] ?? '',
+            'api_gnd_record' => $appParams['api_gnd_record_url'] ?? '',
+            'gnt_home' => $appParams['gnt_home_url'] ?? '',
+            'download_db_url' => $appParams['download_db_url'],
+        ];
+
+        if ($searchFirstClusterOnLoad !== null) {
+            $params['search_cluster_on_load'] = $searchFirstClusterOnLoad;
+        }
+
+        return $params;
     }
 
     /**

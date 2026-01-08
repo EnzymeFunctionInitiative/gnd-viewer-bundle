@@ -47,6 +47,11 @@
                 "main": "js/gnd_svg_canvas_controller.js",
                 "fetch": "eager",
                 "enabled": true
+            },
+            "gnd_export_svg": {
+                "main": "js/gnd_export_svg_controller.js",
+                "fetch": "eager",
+                "enabled": true
             }
         },
         "importmap": {

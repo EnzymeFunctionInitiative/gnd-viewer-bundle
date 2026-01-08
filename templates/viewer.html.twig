@@ -9,6 +9,7 @@
     'loading':      efi ~ '/gnd_loading',
     'search':       efi ~ '/gnd_search_form',
     'canvas':       efi ~ '/gnd_svg_canvas',
+    'export_tool':  efi ~ '/gnd_export_svg',
     'gene_window_container_id':     'gene-window-container',
     'search_form_container_id':     'search-form-container',
     'svg_canvas_container_id':      'svg-canvas-container',
@@ -22,9 +23,11 @@
     setSize: params.gnd_set_size,
     jobId: params.job_id,
     jobKey: params.job_key,
+    jobName: params.gnd_job_name,
     api: {
         metadata: params.api_gnd_search,
-        record: params.api_gnd_record
+        record: params.api_gnd_record,
+        download: params.download_db_url
     },
     sequence: {
         databaseVersion: params.base_sequence_version|default(""),

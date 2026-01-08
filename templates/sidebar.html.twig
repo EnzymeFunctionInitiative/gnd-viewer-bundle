@@ -1,5 +1,6 @@
 
 {% set filter_name = gnd.filter|replace({'/': '--', '_': '-'}) %}
+{% set export_svg_name = gnd.export_tool|replace({'/': '--', '_': '-'}) %}
 
 <aside class="sidebar p-3 bg-dark text-light border-right border-black">
     {% if app_config.sequence.unirefId != '' %}
@@ -139,6 +140,26 @@
     <hr>
     <h4><i class="bi bi-wrench"></i> Tools</h4>
     <div class="my-3">
+        <div class="my-1"
+            {{ stimulus_controller(gnd.export_tool) }}
+            {{ stimulus_action(gnd.export_tool, 'enableTool', gnd.app ~ ':finishedBatchRetrieval@window') }}
+            data-{{ export_svg_name }}-svg-canvas-id-value="{{ gnd.svg_canvas_container_id }}"
+            data-{{ export_svg_name }}-gnd-name-value="{{ app_config.jobName }}"
+        >
+            <button type="button" class="btn btn-light w-100 text-start"
+                {{ stimulus_target(gnd.export_tool, 'toolButton') }}
+                {{ stimulus_action(gnd.export_tool, 'downloadSvg') }}
+                disabled
+            >
+                <i class="bi bi-file-image"></i> Export SVG
+            </button>
+        </div>
+
+        <div class="my-1">
+            <a role="button" class="btn btn-light w-100 text-start" href="{{ app_config.api.download }}" data-controller="tooltip" data-bs-toggle="tooltip" data-bs-placement="right" title="GND databases are SQLite database files.">
+                <i class="bi bi-download"></i> Download GND Database
+            </a>
+        </div>
     </div>
 </aside>
 

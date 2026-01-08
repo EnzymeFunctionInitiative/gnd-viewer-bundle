@@ -88,7 +88,6 @@ export default class GndInfoPopupController extends Controller {
      * @param {float} gndUpperY - vertical position of the bottom of the dialog
      */
 	setPosition(x, gndLowerY, gndUpperY) {
-        console.log(`${x} ${gndLowerY} ${gndUpperY}`);
         const offsetX = 20;
 
         const popupWidth = this.element.offsetWidth;
