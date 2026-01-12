@@ -7,7 +7,6 @@ use Efi\Gnd\Enum\SequenceVersion;
 use Efi\Gnd\Interface\GndReaderInterface;
 use Efi\GndViewerBundle\Dto\GndRequestParams;
 use Efi\GndViewerBundle\Dto\QueryInterface;
-use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class GndViewerService implements GndViewerInterface
@@ -37,7 +36,7 @@ final class GndViewerService implements GndViewerInterface
      * Initial call for search query to obtain stats on the cluster/query, such as the range of
      * indices to retrieve and width in terms of base pairs, etc.
      */
-    public function processGndSearch(InputBag $queryStringParams): array
+    public function processGndSearch(QueryInterface $queryStringParams): array
     {
         $params = $this->getRequestParams($queryStringParams);
 
@@ -94,7 +93,7 @@ final class GndViewerService implements GndViewerInterface
     /**
      * Retrieve a single batch of GNDs (one batch consists of a set of GNDs)
      */
-    public function retrieveGndData(InputBag $queryStringParams, string $range): array
+    public function retrieveGndData(QueryInterface $queryStringParams, string $range): array
     {
         $params = $this->getRequestParams($queryStringParams);
 
@@ -159,12 +158,12 @@ final class GndViewerService implements GndViewerInterface
 
     /**
      * Retrieve the query string parameters from the HTTP request object into an array.
-     * @param {InputBag} $queryStringParams - raw input query string collection
+     * @param {QueryInterface} $queryStringParams - raw input query string collection
      * @return {GndRequestParams}
      */
-    private function getRequestParams(InputBag $queryStringParams): GndRequestParams
+    private function getRequestParams(QueryInterface $queryStringParams): GndRequestParams
     {
-        $params = new GndRequestParams($queryStringParams);
+        $params = GndRequestParams::fromQueryInterface($queryStringParams);
         return $params;
     }
 }
