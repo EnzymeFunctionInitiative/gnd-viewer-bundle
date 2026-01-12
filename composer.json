@@ -20,8 +20,8 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "***REMOVED***"
+            "type": "vcs",
+            "url": "https://github.com/enzymefunctioninitiative/efi-gnd-lib"
         }
     ],
     "config": {
