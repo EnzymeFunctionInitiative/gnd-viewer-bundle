@@ -37,6 +37,10 @@
     },
     search: {
         clusterOnLoad: params.search_cluster_on_load|default("")
+    },
+    urls: {
+        download: params.download_db_url,
+        tutorial: params.tutorial_url,
     }
 } %}
 
@@ -57,5 +61,98 @@
 
     {% include('@EfiGndViewer/components/info_popup.html.twig') with { app_config } %}
 
+</div>
+
+<div id="help-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="showViewerTips">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tips for Exploring</h5>
+            </div>
+            <div class="modal-body" style="font-size: 0.88em">
+                <p>
+                <div><b>Interactive Filtering</b></div>
+                The mouse can be used to select families to filter.  To
+                do this, press and hold the Ctrl key on the keyboard
+                and click on a protein.  All of the PFam families that
+                are associated with the protein will be highlighted.
+                </p>
+                <p>
+                <div><b>Viewing Metadata</b></div>
+                Moving the mouse over a specific protein will show a
+                popup box containing metadata.  As soon as the mouse is
+                moved away from the protein, the box disappears.  To
+                keep the box open, click on the protein, and the box
+                will remain visible until the mouse is moved over a
+                different protein.
+                </p>
+                <p>
+                <div><b>Copying Metadata</b></div>
+                Clicking the copy <i class="bi bi-clipboard"></i> icon when
+                the metadata popup box is visible will copy the
+                metadata to the clipboard.  This information can be
+                pasted into another document for further use.
+                </p>
+                <p>
+                <div><b>Direct Link to UniProt Data</b></div>
+                Clicking the <i class="bi bi-box-arrow-up-right"></i> icon when
+				the metadata popup box is visible takes the user to a website
+                that contains UniProt data for the given protein.
+                </p>
+                <p>
+                <div><b>Changing the Window (Gene)</b></div>
+                The GND explorer can display from 1 to 20 genes on
+                either side of the query gene (center, red).  This can be
+                changed by clicking the "genes" drop down menu in the
+                Genome Window section, and clicking the Apply button.
+                </p>
+                <p>
+                <div><b>Updating the Filter Legend</b></div>
+                Selecting a family filter makes that family, along with its
+                assigned color, appear in a legend box below the "Clear Filter"
+                button.  Individual families can be removed from the legend
+                by moving the mouse over the color box and pressing the X
+                button that appears in the color box.  For InterPro
+                families, the color is not assigned, but the functionality
+                is the same.
+                </p>
+                <p>
+                <div><b>Data Export</b></div>
+				It is possible to export a file that provides the data used to generate the diagrams.
+                The data file format is SQLite, and it can be uploaded to the EFI-GNT
+                tool and viewed again in the future via the <i>View Saved Diagrams</i>
+                option.
+                For advanced use, the file can also be opened with
+                <a href="https://sqlitebrowser.org/" target="_blank">DB Browser for SQLite</a>
+                to manually extract data.
+                </p>
+                <p>
+                The currently displayed diagrams can be exported to the Gene Graphics
+                format and displayed using the
+                <a href="https://katlabs.cc/genegraphics/" target="_blank">Gene Graphics</a>
+                comparative genomics visualization tool.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div id="info-modal" class="modal fade d-none" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="showLicenses">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title">Software Licenses and Attribution</h5>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
