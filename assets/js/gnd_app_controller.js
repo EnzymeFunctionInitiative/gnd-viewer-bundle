@@ -149,6 +149,14 @@ export default class GndAppController extends Controller {
         this.retrieveAndRenderNextSet();
     }
 
+    geneGraphicsExportStatus({ detail: { exportStatus } }) {
+        if (exportStatus === 'start') {
+            this.enterLoadingState();
+        } else {
+            this.handleFooterUpdate('Finished exporting Gene Graphics.', ['text-muted'], 'text-muted');
+        }
+    }
+
     async loadFromSearch({ detail: { query, sequenceVersion } }) {
         // If we are doing a brand new search initiated by the search form, then reset the batch size
         this.numBatchesRetrieved = 0;
@@ -174,7 +182,7 @@ export default class GndAppController extends Controller {
 
     async performSearch(retrievalParams) {
         // Dataset is used to perform actual retrieval and parsing
-        this.dataset = new GndDataset(this.config.api.metadata, this.config.api.record, this.config.jobId, this.config.jobKey, retrievalParams);
+        this.dataset = new GndDataset(this.config.api, this.config.jobId, this.config.jobKey, retrievalParams);
 
         this.enterLoadingState();
 
@@ -293,6 +301,10 @@ export default class GndAppController extends Controller {
         }
 
         this.dispatch('newDiagrams', { detail: { records: newDiagramData } });
+    }
+
+    async startGeneGraphicsExport() {
+        return await this.dataset.fetchGeneGraphicsData();
     }
 
     /**

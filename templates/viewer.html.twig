@@ -27,7 +27,7 @@
     api: {
         metadata: params.api_gnd_search,
         record: params.api_gnd_record,
-        download: params.download_db_url
+        geneGraphics: params.api_gene_graphics
     },
     sequence: {
         databaseVersion: params.base_sequence_version|default(""),
@@ -46,7 +46,7 @@
     {{ stimulus_controller(gnd.app, { 'app-config': app_config }) }}
     data-{{ app_name }}-gene-window-id-value="{{ gnd.gene_window_container_id }}"
     data-{{ app_name }}-search-form-id-value="{{ gnd.search_form_container_id }}"
-    {{ stimulus_action(gnd.app, 'loadFromSearch', gnd.search ~ ':submitSearch@window')|stimulus_action(gnd.app, 'retrieveAndRenderNextSet', gnd.canvas ~ ':batchRenderComplete@window')|stimulus_action(gnd.app, 'updateWindowSize', gnd.window ~ ':updateWindowSize@window')|stimulus_action(gnd.app, 'arrowHighlightCountUpdated', 'efi-gnd-global:arrowHighlightCountUpdated@window') }}
+    {{ stimulus_action(gnd.app, 'loadFromSearch', gnd.search ~ ':submitSearch@window')|stimulus_action(gnd.app, 'retrieveAndRenderNextSet', gnd.canvas ~ ':batchRenderComplete@window')|stimulus_action(gnd.app, 'updateWindowSize', gnd.window ~ ':updateWindowSize@window')|stimulus_action(gnd.app, 'arrowHighlightCountUpdated', 'efi-gnd-global:arrowHighlightCountUpdated@window') }}|stimulus_action(gnd.app, 'geneGraphicsExportStatus', 'efi-gnd-global:geneGraphicsExport@window') }}
     >
 
     {% include('@EfiGndViewer/sidebar.html.twig') with { app_config } %}

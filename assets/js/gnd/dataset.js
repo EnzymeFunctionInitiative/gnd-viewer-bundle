@@ -13,9 +13,10 @@ export default class GndDataset {
      * @param {string} jobKey - job key (UUID)
      * @param {object} retrievalParams - parameters used for retrieval (windowSize, setSize, batchSize)
      */
-    constructor(metadataApiUrl, recordApiUrl, jobId, jobKey, retrievalParams) {
-        this.metadataApiUrl = metadataApiUrl;
-        this.recordApiUrl = recordApiUrl;
+    constructor(api, jobId, jobKey, retrievalParams) {
+        this.metadataApiUrl = api.metadata;
+        this.recordApiUrl = api.record;
+        this.geneGraphicsApiUrl = api.geneGraphics;
         this.jobId = jobId;
         this.jobKey = jobKey;
 
@@ -42,7 +43,7 @@ export default class GndDataset {
         // is 10 (10 sets of 20 records == 200 records).
         this.batchSize = retrievalParams?.batchSize ?? Constants.DEFAULT_BATCH_SIZE;
 
-        // Current position in the retrieval block list
+        // Current position in the retrieval block list, in blocks
         this.currentPosition = 0;
 
         // The last number in the retrieval block list for the current batch (for example, if there
@@ -53,7 +54,15 @@ export default class GndDataset {
         this.requestRanges = new Map();
 
         // Sets the end of the position when the batch retrieval has completed (this.endPosition)
-        this.resetFetchPosition();
+        this.resetFetchPosition(false);
+    }
+
+    /**
+     * Return the range of blocks, the start and end block numbers, for data that has already been retrieved.
+     * @returns {Map} mapping block number to actual index retrieval values
+     */
+    getRequestRanges() {
+        return visibleRanges;
     }
 
     setWindowSize(newWindowSize) {
@@ -287,6 +296,50 @@ export default class GndDataset {
 
         // Return only the new batch for rendering
         return setData;
+    }
+
+    async fetchGeneGraphicsData() {
+        const requestRange = [];
+        const requestRangeKeys = [...this.requestRanges.keys()];
+        requestRangeKeys.forEach((i) => {
+            this.requestRanges.get(i).forEach((r) => requestRange.push(r));
+        });
+
+        const ggParams = {
+            'window': this.windowSize,
+            'sequenceVersion': this.requestedSequenceVersion,
+            'ranges': requestRange
+        };
+
+        const params = new URLSearchParams();
+        params.set('id', this.jobId);
+        params.set('key', this.jobKey);
+
+        const queryString = params.toString();
+        const url = `${this.geneGraphicsApiUrl}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(ggParams)
+        });
+
+        let filename = '';
+        const disposition = response.headers.get('Content-Disposition');
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['']).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) { 
+                filename = matches[1].replace(/['"]/g, '');
+            }
+        }
+
+        const blob = await response.blob();
+
+        return { filename, blob };
     }
 
     /**

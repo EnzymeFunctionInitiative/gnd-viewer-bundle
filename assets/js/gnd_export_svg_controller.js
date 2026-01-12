@@ -1,16 +1,34 @@
 import { Controller } from "@hotwired/stimulus";
+import Util from './gnd/util.js';
 
 export default class extends Controller {
     static targets = [
-        'toolButton',
+        'svgButton',
+        'geneGraphicsButton',
     ];
 
     static values = {
-        svgCanvasId: String,
+        geneGraphicsUrl: String,
         gndName: String,
+        mainAppId: String,
+        svgCanvasId: String,
     };
 
-    UNIREF_CONTROLS_GROUP = 'svg-canvas-uniref-controls-group';
+    UNIREF_CONTROLS_GROUP = '#svg-canvas-uniref-controls-group';
+
+    connect() {
+        setTimeout(() => {
+            this.initializeOutlets();
+        }, 0);
+    }
+
+    initializeOutlets() {
+        this.mainAppOutlet = Util.findController(
+            this.application,
+            this.mainAppIdValue,
+            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-app'
+        );
+    }
 
     downloadSvg(event) {
         event.preventDefault();
@@ -22,7 +40,6 @@ export default class extends Controller {
 
         const unirefGroup = clone.querySelector(this.UNIREF_CONTROLS_GROUP);
         if (unirefGroup) {
-            console.log('REMOVING');
             unirefGroup.remove();
         }
 
@@ -53,15 +70,44 @@ export default class extends Controller {
         URL.revokeObjectURL(url);
     }
 
+    async downloadGeneGraphics(event) {
+        event.preventDefault();
+
+        this.dispatch('geneGraphicsExport', { detail: { status: 'start' }, prefix: 'efi-gnd-global' });
+
+        let { filename, blob } = await this.mainAppOutlet.startGeneGraphicsExport();
+        if (!filename) {
+            filename = 'export.tab';
+        }
+
+        if (!blob) {
+            this.dispatch('geneGraphicsExport', { detail: { status: 'error' }, prefix: 'efi-gnd-global' });
+            return;
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        a.remove();
+
+        this.dispatch('geneGraphicsExport', { detail: { status: 'finish' }, prefix: 'efi-gnd-global' });
+    }
+
     enableTool() {
-        this.toolButtonTarget.disabled = false;
+        this.svgButtonTarget.disabled = false;
+        this.geneGraphicsButtonTarget.disabled = false;
     }
 
     getStyleRules() {
         return `
-    text { font-family: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
     .highlighted { stroke: #000; stroke-width: 3; }
-    .diagram-title { font-size: 0.88rem; }
+    .diagram-title { font-size: 14px; }
 `;
     }
 }
