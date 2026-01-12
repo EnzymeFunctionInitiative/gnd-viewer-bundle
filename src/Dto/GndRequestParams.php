@@ -4,27 +4,39 @@ namespace Efi\GndViewerBundle\Dto;
 
 use Efi\Gnd\Dto\GndQueryParams;
 use Efi\Gnd\Enum\SequenceVersion;
-use Symfony\Component\HttpFoundation\InputBag;
 
 readonly class GndRequestParams
 {
-    public ?int $window;
-    public ?float $scaleFactor;
-    public ?SequenceVersion $sequenceVersion;
-    public ?string $unirefId;
-    public ?string $rawQuery;
-
-    public function __construct(InputBag $bag)
+    public function __construct(
+        public ?int $window = null,
+        public ?float $scaleFactor = null,
+        public ?SequenceVersion $sequenceVersion = null,
+        public ?string $unirefId = null,
+        public ?string $rawQuery = null,
+        public ?array $ranges = null, // Used by Gene Graphics export
+    )
     {
-        $this->window = $bag->getInt('window') ?: GndQueryParams::getDefaultWindow();
-        $this->scaleFactor = $bag->has('scale-factor') ? (float) $bag->get('scale-factor') : GndQueryParams::getDefaultScaleFactor();
-        $this->sequenceVersion = SequenceVersion::tryFrom($bag->get('seq-ver')) ?? GndQueryParams::getDefaultSequenceVersion();
-        $this->unirefId = $bag->get('uniref-id');
-        $this->rawQuery = $bag->get('query');
+    }
+
+    public static function fromQueryInterface(QueryInterface $bag)
+    {
+        return new static(
+            $bag->getInt('window') ?: GndQueryParams::getDefaultWindow(),
+            $bag->has('scale-factor') ? (float) $bag->get('scale-factor') : GndQueryParams::getDefaultScaleFactor(),
+            SequenceVersion::tryFrom($bag->get('seq-ver')) ?? GndQueryParams::getDefaultSequenceVersion(),
+            $bag->get('uniref-id'),
+            $bag->get('query'),
+        );
     }
 
     public function toGndQueryParams(): GndQueryParams
     {
-        return new GndQueryParams($this->window, $this->scaleFactor, $this->sequenceVersion, $this->rawQuery, $this->unirefId);
+        return new GndQueryParams(
+            $this->window ?: GndQueryParams::getDefaultWindow(),
+            $this->scaleFactor ?: GndQueryParams::getDefaultScaleFactor(),
+            $this->sequenceVersion ?: GndQueryParams::getDefaultSequenceVersion(),
+            $this->rawQuery,
+            $this->unirefId
+        );
     }
 }
