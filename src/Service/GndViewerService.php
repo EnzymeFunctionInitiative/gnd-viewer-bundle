@@ -108,6 +108,11 @@ final class GndViewerService implements GndViewerInterface
         return $results;
     }
 
+    public function getReader(): GndReaderInterface
+    {
+        return $this->gndReader;
+    }
+
     public function getViewerParameters(GndViewerInterface $gndReader, QueryInterface $query, int $jobId, string $jobKey, array $appParams): array
     {
         $metadata = $gndReader->getMetadata();
@@ -128,8 +133,10 @@ final class GndViewerService implements GndViewerInterface
             'metadata_url' => $appParams['metadata_url'] ?? '',
             'api_gnd_search' => $appParams['api_gnd_search_url'] ?? '',
             'api_gnd_record' => $appParams['api_gnd_record_url'] ?? '',
+            'api_gene_graphics' => $appParams['gene_graphics_url'],
             'gnt_home' => $appParams['gnt_home_url'] ?? '',
             'download_db_url' => $appParams['download_db_url'],
+            'tutorial_url' => $appParams['tutorial_url'],
         ];
 
         if ($searchFirstClusterOnLoad !== null) {
