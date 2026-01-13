@@ -50,7 +50,7 @@
     {{ stimulus_controller(gnd.app, { 'app-config': app_config }) }}
     data-{{ app_name }}-gene-window-id-value="{{ gnd.gene_window_container_id }}"
     data-{{ app_name }}-search-form-id-value="{{ gnd.search_form_container_id }}"
-    {{ stimulus_action(gnd.app, 'loadFromSearch', gnd.search ~ ':submitSearch@window')|stimulus_action(gnd.app, 'retrieveAndRenderNextSet', gnd.canvas ~ ':batchRenderComplete@window')|stimulus_action(gnd.app, 'updateWindowSize', gnd.window ~ ':updateWindowSize@window')|stimulus_action(gnd.app, 'arrowHighlightCountUpdated', 'efi-gnd-global:arrowHighlightCountUpdated@window') }}|stimulus_action(gnd.app, 'geneGraphicsExportStatus', 'efi-gnd-global:geneGraphicsExport@window') }}
+    {{ stimulus_action(gnd.app, 'loadFromSearch', gnd.search ~ ':submitSearch@window')|stimulus_action(gnd.app, 'retrieveAndRenderNextSet', gnd.canvas ~ ':batchRenderComplete@window')|stimulus_action(gnd.app, 'updateWindowSize', gnd.window ~ ':updateWindowSize@window')|stimulus_action(gnd.app, 'arrowHighlightCountUpdated', 'efi-gnd-global:arrowHighlightCountUpdated@window')|stimulus_action(gnd.app, 'geneGraphicsExportStatus', 'efi-gnd-global:geneGraphicsExport@window') }}
     >
 
     {% include('@EfiGndViewer/sidebar.html.twig') with { app_config } %}
@@ -74,7 +74,7 @@
                 <div><b>Interactive Filtering</b></div>
                 The mouse can be used to select families to filter.  To
                 do this, press and hold the Ctrl keyboard key on Windows or
-                the Option key on MacOS
+                the Option key <i class="bi bi-option"></i> on MacOS
                 and click on a protein.  All of the PFam families that
                 are associated with the protein will be highlighted.
                 </p>

@@ -72,7 +72,7 @@ export default class GndGeneWindowController extends Controller {
     }
 
     updateWindowSizeValue(newWindowSize) {
-        this.windowSize = newWindowSize;
+        this.windowSize = parseInt(newWindowSize);
         this.dispatch('updateWindowSize', { detail: { windowSize: newWindowSize } });
     }
 }

@@ -315,6 +315,7 @@ export default class GndAppController extends Controller {
 
         const retrievalParams = this.getDefaultRetrievalParams();
         this.updateRetrievalParamsQuery(retrievalParams);
+        retrievalParams.query = this.searchFormOutlet.getSearchQuery();
 
         this.performSearch(retrievalParams);
     }
