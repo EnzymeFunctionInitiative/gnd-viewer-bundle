@@ -1,5 +1,6 @@
 import Constants from './constants.js';
 import Snap from '../Snap.svg/Snap.svg-0.5.1/snap.svg-import.js';
+import './polyfills.js';
 
 export default class GndRenderer {
 
@@ -13,6 +14,9 @@ export default class GndRenderer {
     // This only stores Pfams because it is used for handling arrow clicks, and those only work
     // for Pfam families.
     familyArrowMap = new Map();
+
+    // Map neighbor IDs to query IDs
+    arrowIdQueryMap = new Map();
 
     constructor(svgElement, mouseActionClass = 'gnd-svg-canvas') {
         this.element = svgElement;
@@ -58,6 +62,29 @@ export default class GndRenderer {
 
     hasSwissprotArrows() {
         return this.swissprotArrows.size > 0;
+    }
+
+    /**
+     * Return the set of query IDs (one ID for each GND) that has one or more neighbors (or the
+     * query) that are in all of the highlighted families.
+     * @param {Set} highlightedFamilies - families that are highlighted
+     * @return {Set} set of query IDs (GNDs) that are the intersection of the IDs in the provided families
+     */
+    getExclusiveQueryIdSetForFamilies(highlightedFamilies) {
+        const families = Array.from(highlightedFamilies);
+
+        if (families.length === 0) {
+            return new Set();
+        }
+
+        const setsOfQueryIds = families.map(family => {
+            const arrows = this.familyArrowMap.get(family);
+            return new Set(
+                Array.from(arrows, arrow => this.arrowIdQueryMap.get(arrow.id))
+            );
+        });
+
+        return setsOfQueryIds.reduce((acc, curr) => acc.intersection(curr));
     }
 
     /**
@@ -213,6 +240,7 @@ export default class GndRenderer {
 
         // Save family and SwissProt metadata mapping
         this.processDiagramMetadata(query, queryArrow);
+        this.arrowIdQueryMap.set(query.Id, query.Id);
 
         // Draw Neighbor Arrows
         for (const neighbor of diagramData.N) {
@@ -230,6 +258,7 @@ export default class GndRenderer {
 
             // Save family and SwissProt metadata mapping
             this.processDiagramMetadata(neighbor, neighborArrow);
+            this.arrowIdQueryMap.set(neighbor.Id, query.Id);
         }
 
         const axisYpos = yPos + this.AXIS_THICKNESS - 1;
@@ -318,7 +347,7 @@ export default class GndRenderer {
             subArrows = this.drawSubarrows(arrowGroup, arrowData, coords, isComplement, mainArrow);
         }
 
-        return { arrow: mainArrow, subArrows: subArrows, group: arrowGroup };
+        return { arrow: mainArrow, subArrows: subArrows, group: arrowGroup, id: arrowData.Id };
     }
 
     /**

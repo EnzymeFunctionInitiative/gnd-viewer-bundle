@@ -291,7 +291,8 @@ export default class GndFilterController extends Controller {
      */
     updateSelectionStats() {
         const numArrowsSelected = this.svgCanvasOutlet.getHighlightedGndCount();
-        this.dispatch('arrowHighlightCountUpdated', { detail: { numArrowsSelected }, prefix: 'efi-gnd-global' });
+        const hasHighlightedFamilies = this.highlightedFamilyIds.size > 0;
+        this.dispatch('arrowHighlightCountUpdated', { detail: { numArrowsSelected, hasHighlightedFamilies }, prefix: 'efi-gnd-global' });
     }
 
     /**

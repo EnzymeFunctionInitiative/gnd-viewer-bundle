@@ -67,7 +67,8 @@ export default class GndSvgCanvasController extends Controller {
     }
 
     getHighlightedGndCount() {
-        return this.renderer.getHighlightedGndCount();
+        const gndIds = this.renderer.getExclusiveQueryIdSetForFamilies(this.highlightedFamilies);
+        return gndIds.size;
     }
 
     /**

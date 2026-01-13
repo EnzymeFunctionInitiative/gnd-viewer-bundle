@@ -319,13 +319,13 @@ export default class GndAppController extends Controller {
         this.performSearch(retrievalParams);
     }
 
-    arrowHighlightCountUpdated({ detail: { numArrowsSelected } }) {
-        if (numArrowsSelected === 0) {
+    arrowHighlightCountUpdated({ detail: { numArrowsSelected, hasHighlightedFamilies } }) {
+        if (!hasHighlightedFamilies) {
             this.footerHighlightCountTarget.classList.add('d-none');
             this.footerHighlightCountTarget.textContent = '';
         } else {
             this.footerHighlightCountTarget.classList.remove('d-none');
-            this.footerHighlightCountTarget.textContent = `Number of Diagrams with Selected Families: ${numArrowsSelected}`;
+            this.footerHighlightCountTarget.textContent = `Number of Diagrams with All Selected Families: ${numArrowsSelected}`;
         }
     }
 
