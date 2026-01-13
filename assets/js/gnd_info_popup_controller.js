@@ -124,7 +124,7 @@ export default class GndInfoPopupController extends Controller {
 	}
 
     openMetadataPage() {
-        const url = `${this.metadataUrlValue}?id=${this.currentData.Id}`;
+        const url = `${this.metadataUrlValue}/id?id=${this.currentData.Id}`;
         window.open(url, '_blank').focus();
     }
 
