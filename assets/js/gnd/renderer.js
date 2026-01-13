@@ -63,7 +63,6 @@ export default class GndRenderer {
     }
 
     setLegendScale(legendScale) {
-        console.log(this.legendScale);
         this.legendScale = legendScale;
     }
 
