@@ -59,7 +59,7 @@
 
     {% include('@EfiGndViewer/footer.html.twig') with { 'app_config': app_config } %}
 
-    {% include('@EfiGndViewer/components/info_popup.html.twig') with { app_config } %}
+    {% include('@EfiGndViewer/components/info_popup.html.twig') with { 'metadata_url': app_config.sequence.metadataUrl, 'svg_canvas_container_id': gnd.svg_canvas_container_id } %}
 
 </div>
 
