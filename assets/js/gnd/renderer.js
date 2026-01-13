@@ -29,6 +29,8 @@ export default class GndRenderer {
         this.unirefIconsGroup = null;
         this.legendGroup = null;
 
+        this.legendScale = this.DEFAULT_LEGEND_SCALE;
+
         this.drawCenterVerticalAxis = false;
 
         this._setInternalDimensions(false);
@@ -58,6 +60,11 @@ export default class GndRenderer {
     clearLegend() {
         if (this.legendGroup)
             this.legendGroup.remove();
+    }
+
+    setLegendScale(legendScale) {
+        console.log(this.legendScale);
+        this.legendScale = legendScale;
     }
 
     hasSwissprotArrows() {
@@ -452,11 +459,11 @@ export default class GndRenderer {
         const yPos = this._calculateYpos(index);
         const xPos = this.leftCanvasPadding;
 
-        const l1 = Math.log10(this.LEGEND_SCALE);
+        const l1 = Math.log10(this.legendScale);
         const l2 = Math.ceil(l1) - 2;
         const legendLength = Math.pow(10, l2); // In AA
         const legendBp = legendLength * 3;
-        const legendScaleFactor = this.drawableAreaWidth / this.LEGEND_SCALE;
+        const legendScaleFactor = this.drawableAreaWidth / this.legendScale;
         const lineLength = legendBp * legendScaleFactor;
         const legendText = legendLength * 3 / 1000;
 
@@ -749,7 +756,7 @@ export default class GndRenderer {
         this.AXIS_BUFFER = 2;
         this.AXIS_COLOR = "black";
         this.QUERY_AXIS_COLOR = "lightgray";
-        this.LEGEND_SCALE = 3000;
+        this.DEFAULT_LEGEND_SCALE = 3000;
         this.ORIENT_SAME_DIR = true;
     }
 

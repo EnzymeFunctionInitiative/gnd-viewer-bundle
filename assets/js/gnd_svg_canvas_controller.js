@@ -117,8 +117,10 @@ export default class GndSvgCanvasController extends Controller {
      * 
      * @param {object} detail.records - contains an array of GndDrawableDiagram objects
      */
-    renderBatch({ detail: { records } }) {
+    renderBatch({ detail: { records, legendScale } }) {
         this.renderer.clearLegend();
+        this.renderer.setLegendScale(legendScale);
+        this.clearAllHighlights();
 
         const newTotalDiagramCount = this.diagramCount + records.length;
         this.renderer.updateCanvasSize(newTotalDiagramCount);

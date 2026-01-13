@@ -300,7 +300,7 @@ export default class GndAppController extends Controller {
             }
         }
 
-        this.dispatch('newDiagrams', { detail: { records: newDiagramData } });
+        this.dispatch('newDiagrams', { detail: { records: newDiagramData, legendScale: setData.rawDiagramSet.legend_scale } });
     }
 
     async startGeneGraphicsExport() {

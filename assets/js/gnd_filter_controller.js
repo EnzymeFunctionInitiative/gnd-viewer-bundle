@@ -47,6 +47,7 @@ export default class GndFilterController extends Controller {
     // ----- EVENT HANDLERS -----
 
     newDiagrams({ detail: { records } }) {
+        this.clearFilter();
         for (const record of records) {
             this.addFamilyNameMapping(record.Query);
 
