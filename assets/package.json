@@ -33,11 +33,6 @@
                 "fetch": "eager",
                 "enabled": true
             },
-            "gnd_loading": {
-                "main": "js/gnd_loading_controller.js",
-                "fetch": "eager",
-                "enabled": true
-            },
             "gnd_search_form": {
                 "main": "js/gnd_search_form_controller.js",
                 "fetch": "eager",

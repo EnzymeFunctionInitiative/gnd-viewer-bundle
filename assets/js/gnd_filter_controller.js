@@ -13,7 +13,8 @@ export default class GndFilterController extends Controller {
     ];
 
     static values = {
-        svgCanvasId: String,
+        svgCanvasElementId: String,
+        svgCanvasControllerId: String,
     };
 
     // Map family ID to description
@@ -34,13 +35,15 @@ export default class GndFilterController extends Controller {
         setTimeout(() => {
             this.initializeOutlets();
         }, 0);
+
+        Util.signalReady(this);
     }
 
     initializeOutlets() {
         this.svgCanvasOutlet = Util.findController(
             this.application,
-            this.svgCanvasIdValue,
-            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-svg-canvas'
+            this.svgCanvasElementIdValue,
+            this.svgCanvasControllerIdValue,
         );
     }
 

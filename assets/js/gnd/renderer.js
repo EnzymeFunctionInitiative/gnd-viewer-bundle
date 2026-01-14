@@ -591,7 +591,7 @@ export default class GndRenderer {
             this.unirefIconsGroup.remove();
         }
         this.unirefIconsGroup = this.snap.paper.group();
-        this.unirefIconsGroup.attr({ id: 'svg-canvas-uniref-controls-group' });
+        this.unirefIconsGroup.attr({ id: Constants.UNIREF_CONTROLS_GROUP });
         this.drawUnirefIcon(this.PADDING, this.PADDING, this.UNIREF_ICON_SIZE * 1.4);
         this.unirefIconsGroup.text(this.UNIREF_ICON_SIZE * 1.6 + this.PADDING, this.PADDING + this.UNIREF_ICON_SIZE * 0.6, "Click this icon on the diagrams below to open a new window with the sequences contained in the given UniRef cluster.")
             .attr({'class':'diagram-title-uniref-help'});

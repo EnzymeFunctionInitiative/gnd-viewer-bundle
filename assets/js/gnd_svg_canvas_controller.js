@@ -7,7 +7,8 @@ import Util from './gnd/util.js';
 export default class GndSvgCanvasController extends Controller {
 
     static values = {
-        mainAppId: String,
+        mainAppElementId: String,
+        mainAppControllerId: String,
     };
 
     // Keep track of which arrows are highlighted
@@ -21,13 +22,14 @@ export default class GndSvgCanvasController extends Controller {
         setTimeout(() => {
             this.initializeOutlets();
         }, 0);
+        Util.signalReady(this);
     }
 
     initializeOutlets() {
         this.mainAppOutlet = Util.findController(
             this.application,
-            this.mainAppIdValue,
-            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-app'
+            this.mainAppElementIdValue,
+            this.mainAppControllerIdValue,
         );
     }
 

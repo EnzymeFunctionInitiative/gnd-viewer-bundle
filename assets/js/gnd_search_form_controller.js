@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import Util from './gnd/util.js';
 
 export default class GndSearchFormController extends Controller {
     static targets = ['query', 'submitButton', 'searchAlert'];
@@ -17,6 +18,13 @@ export default class GndSearchFormController extends Controller {
                     }
                 });
             });
+        }
+        Util.signalReady(this);
+    }
+
+    appInitialized({ detail: { initialized } }) {
+        if (initialized) {
+            this.submitButtonTarget.disabled = false;
         }
     }
 

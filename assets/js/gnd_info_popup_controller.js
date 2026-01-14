@@ -3,8 +3,9 @@ import Util from './gnd/util.js';
 
 export default class GndInfoPopupController extends Controller {
     static values = {
-        metadataUrl: String,
         canvasId: String,
+        metadataUrl: String,
+        uniprotUrl: String,
     };
 
     static targets = [
@@ -29,6 +30,7 @@ export default class GndInfoPopupController extends Controller {
         setTimeout(() => {
             this.initializeOutlets();
         }, 0);
+        Util.signalReady(this);
     }
 
     initializeOutlets() {
@@ -125,6 +127,11 @@ export default class GndInfoPopupController extends Controller {
 
     openMetadataPage() {
         const url = `${this.metadataUrlValue}/id?id=${this.currentData.Id}`;
+        window.open(url, '_blank').focus();
+    }
+
+    openUniProtPage() {
+        const url = this.uniprotUrlValue.replace('<ID>', this.currentData.Id);
         window.open(url, '_blank').focus();
     }
 

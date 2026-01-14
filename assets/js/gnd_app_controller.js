@@ -46,55 +46,40 @@ export default class GndAppController extends Controller {
         'footerHighlightCount',
         'footerProgressContainer',
         'footerProgressBar',
-        'metadataContainer',
-        'geneWindowContainer',
-        'searchFormContainer',
     ];
 
     static values = {
         appConfig: Object,
-        geneWindowId: String,
-        searchFormId: String,
+        geneWindowElementId: String,
+        searchFormElementId: String,
+        geneWindowControllerId: String,
+        searchFormControllerId: String,
+        requiredControllers: Array,
     };
-
-    dataset = null;
 
     // Indicates which loading mode we're in ('Show more' => 'more', 'Show all' => 'all'). 
     // The 'idle' state prevents multiple loads at once
     loadingMode = 'idle';
 
     connect() {
-        this.colorService = new GndColor();
         // diagramStore - Diagram parsing and representation
-        this.diagramStore = new GndDiagramStore(this.colorService);
+        this.diagramStore = new GndDiagramStore(new GndColor());
         this.numGndsRetrieved = 0;
         this.numBatchesRetrieved = 0;
+        this.dataset = null;
 
         this.config = this.parseOptions(this.appConfigValue);
+
+        this.readyControllers = new Set();
 
         setTimeout(() => {
             this.initializeOutlets();
         }, 1);
     }
 
-    initializeOutlets() {
-        this.geneWindowOutlet = Util.findController(
-            this.application,
-            this.geneWindowIdValue,
-            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-gene-window'
-        );
-
-        this.searchFormOutlet = Util.findController(
-            this.application,
-            this.searchFormIdValue,
-            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-search-form'
-        );
-
-        if (this.geneWindowOutlet) {
-            this.checkForImmediateSearch();
-        }
-    }
-
+    /**
+     * Extract values from the app_config object.
+     */
     parseOptions(options) {
         const config = {
             ...options,
@@ -102,16 +87,88 @@ export default class GndAppController extends Controller {
             sequence: { ...options.sequence },
             search: { ...options.search }
         };
-        const seqVersion = this.getDatabaseSequenceVersion(options.sequence.databaseVersion);
+        const seqVersion = this.parseDatabaseSequenceVersion(options.sequence.databaseVersion);
         config.sequence.databaseVersion = seqVersion;
         config.sequence.versionLabel = document.getElementById('base-sequence-version');
         return config;
     }
 
-    disconnect() {
+
+
+
+    // ----- Public Accessors -----
+
+
+    /**
+     * Return a GndDrawableDiagram from the datastore.
+     * @param {String} id - identifier to lookup
+     * @returns {GndDrawableDiagram}
+     */
+    getFromDataStore(id) {
+        const data = this.diagramStore.getData(id);
+        return data;
+    }
+    
+
+
+
+    // ----- Inter-connector Communication -----
+
+    /**
+     * Obtain connection to outlets that this connector will communicate with.
+     */
+    initializeOutlets() {
+        // For updating window size and sending request to backend
+        this.geneWindowOutlet = Util.findController(
+            this.application,
+            this.geneWindowElementIdValue,
+            this.geneWindowControllerIdValue,
+        );
+
+        // To obtain search parameters (query, UniRef)
+        this.searchFormOutlet = Util.findController(
+            this.application,
+            this.searchFormElementIdValue,
+            this.searchFormControllerIdValue,
+        );
     }
 
-    // Wait until the gene window controller is connected before doing an automatic search
+    /**
+     * Called when a controller is initialized (connected).  Wired in viewer.html.twig
+     * @param {event} event - { detail: { name: 'controllerName' } }
+     */
+    controllerCheckIn(event) {
+        const controllerName = event.detail.name;
+
+        if (this.requiredControllersValue.includes(controllerName)) {
+            this.readyControllers.add(controllerName);
+            this.updateAppState();
+        }
+
+        event.stopPropagation();
+    }
+
+    /**
+     * Checks if all of the required controllers have been connected and then dispatches an event
+     * indicating that the application is ready.
+     */
+    updateAppState() {
+        const isReady = this.requiredControllersValue.every(name => this.readyControllers.has(name));
+        if (isReady) {
+            this.checkForImmediateSearch();
+            this.dispatch('appInitialized', { detail: { initialized: true }, prefix: 'efi-gnd-global' });
+        }
+    }
+
+
+
+
+    // ----- Search Event Handlers -----
+
+    /**
+     * If the user clicked on a UniRef ID, then perform an immediate search without waiting for
+     * user input.
+     */
     checkForImmediateSearch() {
         if (!this.config.sequence.unirefId.length && !this.config.search.clusterOnLoad)
             return;
@@ -125,6 +182,9 @@ export default class GndAppController extends Controller {
         this.retrieveAndRenderNextSet();
     }
 
+    /**
+     * Wired from footer.html.twig
+     */
     showMore(event) {
         // Prevent 'Show more' from being clicked while 'Show all' is running
         if (this.loadingMode !== 'idle')
@@ -137,6 +197,9 @@ export default class GndAppController extends Controller {
         this.retrieveAndRenderNextSet();
     }
 
+    /**
+     * Wired from footer.html.twig
+     */
     showAll() {
         // Prevent 'Show all' from being clicked while 'Show more' is running
         if (this.loadingMode !== 'idle')
@@ -149,6 +212,9 @@ export default class GndAppController extends Controller {
         this.retrieveAndRenderNextSet();
     }
 
+    /**
+     * Wired from viewer.html.twig
+     */
     geneGraphicsExportStatus({ detail: { exportStatus } }) {
         if (exportStatus === 'start') {
             this.enterLoadingState();
@@ -157,7 +223,11 @@ export default class GndAppController extends Controller {
         }
     }
 
+    /**
+     * Wired from viewer.html.twig
+     */
     async loadFromSearch({ detail: { query, sequenceVersion } }) {
+        console.log('load from search');
         // If we are doing a brand new search initiated by the search form, then reset the batch size
         this.numBatchesRetrieved = 0;
 
@@ -179,6 +249,96 @@ export default class GndAppController extends Controller {
             }
         }
     }
+
+    /**
+     * Works with GndDataset to retrieve a set of diagram data from the API, parsing the diagrams
+     * after retrieval, and dispatching an event with the new records.
+     * Event is triggered by gnd_svg_canvas
+     */
+    async retrieveAndRenderNextSet() {
+        // Load all of the remaining diagrams
+        const ignoreMaxLimit = (this.loadingMode === 'all');
+
+        if (!this.dataset.hasMoreRecordsToFetch(ignoreMaxLimit)) {
+            this.dispatch('finishedBatchRetrieval', { detail: { message: 'No more records in batch' } });
+            console.log('Finished fetching all batches');
+            this.handleSuccess();
+            return;
+        }
+
+        // Fetch the next set of diagrams (the raw data is parsed by GndDiagramStore within the
+        // dataset object)
+        let setData = null;
+        try {
+            setData = await this.dataset.fetchNextSet();
+        } catch (error) {
+            console.log('Error fetching batch of records: ' + error);
+            this.handleError();
+            return;
+        }
+
+        // Converts the raw diagram data into GndDrawableDiagram objects (which contain
+        // GndDrawableGene objects for each gene)
+        const newDiagramData = this.diagramStore.updateStore(setData.rawDiagramSet);
+
+        this.updateProgressBar(setData.percentCompleted);
+
+        this.numGndsRetrieved += setData.numDiagrams;
+        this.numBatchesRetrieved++;
+
+        if (!this.dataset.hasMoreRecordsToFetch(true)) {
+            for (const child of this.footerActionsTarget.children) {
+                child.disabled = true;
+            }
+        }
+
+        this.dispatch('newDiagrams', { detail: { records: newDiagramData, legendScale: setData.rawDiagramSet.legend_scale } });
+    }
+
+
+
+
+    // ----- Other Event Handlers (External UI Events) -----
+
+    /**
+     * An event handler that originates in an event triggered by gnd_export_tool
+     */
+    async startGeneGraphicsExport() {
+        return await this.dataset.fetchGeneGraphicsData();
+    }
+
+    /**
+     * This is an event handler that originates in a event triggered by gnd_gene_window,
+     * when the user in the UI updates the window size.
+     */
+    async updateWindowSize({ detail: { windowSize } }) {
+        this.dataset.setWindowSize(windowSize);
+
+        const retrievalParams = this.getDefaultRetrievalParams();
+        this.updateRetrievalParamsQuery(retrievalParams);
+        retrievalParams.query = this.searchFormOutlet.getSearchQuery();
+
+        this.performSearch(retrievalParams);
+    }
+
+    /**
+     * Called to update the footer for the number of GNDs that are selected.
+     * Initiated from a global event
+     */
+    arrowHighlightCountUpdated({ detail: { numArrowsSelected, hasHighlightedFamilies } }) {
+        if (!hasHighlightedFamilies) {
+            this.footerHighlightCountTarget.classList.add('d-none');
+            this.footerHighlightCountTarget.textContent = '';
+        } else {
+            this.footerHighlightCountTarget.classList.remove('d-none');
+            this.footerHighlightCountTarget.textContent = `Number of Diagrams with All Selected Families: ${numArrowsSelected}`;
+        }
+    }
+
+
+
+
+    // ----- Search Functions -----
 
     async performSearch(retrievalParams) {
         // Dataset is used to perform actual retrieval and parsing
@@ -232,7 +392,7 @@ export default class GndAppController extends Controller {
             }
         }
 
-        this.dispatch('initializeApp', { detail: {
+        this.dispatch('searchCompleted', { detail: {
             totalRecords: metadata.totalRecords,
             scaleFactor: metadata.scaleFactor,
             useUniref: useUniref,
@@ -241,6 +401,11 @@ export default class GndAppController extends Controller {
             windowSize: this.getWindowSize(),
         } });
     }
+
+
+
+
+    // ----- Private Getters -----
 
     /**
      * Return the number of sets that have been already retrieved, or the default if this is the
@@ -254,90 +419,21 @@ export default class GndAppController extends Controller {
         }
     }
 
-    getFromDataStore(id) {
-        const data = this.diagramStore.getData(id);
-        return data;
-    }
-
-    /**
-     * Works with GndDataset to retrieve a set of diagram data from the API, parsing the diagrams
-     * after retrieval, and dispatching an event with the new records.
-     */
-    async retrieveAndRenderNextSet() {
-        // Load all of the remaining diagrams
-        const ignoreMaxLimit = (this.loadingMode === 'all');
-
-        if (!this.dataset.hasMoreRecordsToFetch(ignoreMaxLimit)) {
-            this.dispatch('finishedBatchRetrieval', { detail: { message: 'No more records in batch' } });
-            console.log('Finished fetching all batches');
-            this.handleSuccess();
-            return;
-        }
-
-        // Fetch the next set of diagrams (the raw data is parsed by GndDiagramStore within the
-        // dataset object)
-        let setData = null;
-        try {
-            setData = await this.dataset.fetchNextSet();
-        } catch (error) {
-            console.log('Error fetching batch of records: ' + error);
-            this.handleError();
-            return;
-        }
-
-        // Converts the raw diagram data into GndDrawableDiagram objects (which contain
-        // GndDrawableGene objects for each gene)
-        const newDiagramData = this.diagramStore.updateStore(setData.rawDiagramSet);
-
-        this.updateProgressBar(setData.percentCompleted);
-
-        this.numGndsRetrieved += setData.numDiagrams;
-        this.numBatchesRetrieved++;
-
-        if (!this.dataset.hasMoreRecordsToFetch(true)) {
-            for (const child of this.footerActionsTarget.children) {
-                child.disabled = true;
-            }
-        }
-
-        this.dispatch('newDiagrams', { detail: { records: newDiagramData, legendScale: setData.rawDiagramSet.legend_scale } });
-    }
-
-    async startGeneGraphicsExport() {
-        return await this.dataset.fetchGeneGraphicsData();
-    }
-
-    /**
-     * This is an event handler that is called when the user in the UI updates the window size.
-     */
-    async updateWindowSize({ detail: { windowSize } }) {
-        this.dataset.setWindowSize(windowSize);
-
-        const retrievalParams = this.getDefaultRetrievalParams();
-        this.updateRetrievalParamsQuery(retrievalParams);
-        retrievalParams.query = this.searchFormOutlet.getSearchQuery();
-
-        this.performSearch(retrievalParams);
-    }
-
-    arrowHighlightCountUpdated({ detail: { numArrowsSelected, hasHighlightedFamilies } }) {
-        if (!hasHighlightedFamilies) {
-            this.footerHighlightCountTarget.classList.add('d-none');
-            this.footerHighlightCountTarget.textContent = '';
-        } else {
-            this.footerHighlightCountTarget.classList.remove('d-none');
-            this.footerHighlightCountTarget.textContent = `Number of Diagrams with All Selected Families: ${numArrowsSelected}`;
-        }
-    }
-
-
-    // ----- Helpers -----
-
     getWindowSize() {
-        return this.geneWindowOutlet?.getWindowSize() ?? Constants.DEFAULT_WINDOW_SIZE;
+        return this.geneWindowOutlet?.getWindowSize() ?? this.config.search.window ?? Constants.DEFAULT_WINDOW_SIZE;
     }
 
-    getDatabaseSequenceVersion(databaseVersion) {
+
+
+
+    // ----- Helpers and Retrieval Parameter Preparation -----
+
+    /**
+     * Parse the database sequence version.
+     * @param {String} databaseVersion - 'uniref50', 'uniref90', or 'uniprot'
+     * @returns {String} one of Constants.UNIREF50, Constants.UNIREF90, or Constants.UNIPROT (defaults to Constants.UNIPROT)
+     */
+    parseDatabaseSequenceVersion(databaseVersion) {
         let seqVersion = Constants.UNIPROT;
         if (databaseVersion === 'uniref90') {
             seqVersion = Constants.UNIREF90;
@@ -367,6 +463,8 @@ export default class GndAppController extends Controller {
         };
         return retrievalParams;
     }
+
+
 
 
     // ----- UI Helpers -----

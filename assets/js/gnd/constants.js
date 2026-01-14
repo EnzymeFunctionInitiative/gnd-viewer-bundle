@@ -14,4 +14,6 @@ export default class Constants {
     static UNIPROT_TITLE = 'UniProt';
 
     static QUERY_FILL_COLOR = 'red';
+
+    static UNIREF_CONTROLS_GROUP = 'svg-canvas-uniref-controls-group';
 }

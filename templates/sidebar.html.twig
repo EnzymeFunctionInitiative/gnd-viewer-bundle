@@ -1,7 +1,4 @@
 
-{% set filter_name = gnd.filter|replace({'/': '--', '_': '-'}) %}
-{% set export_svg_name = gnd.export_tool|replace({'/': '--', '_': '-'}) %}
-
 <aside class="sidebar p-3 bg-dark text-light border-right border-black">
     {% if app_config.sequence.unirefId != '' %}
     <div class="d-none">
@@ -9,7 +6,7 @@
         <h4><i class="bi bi-search"></i> Search</h4>
         <div id="{{ gnd.search_form_container_id }}"
             {{ stimulus_controller(gnd.search) }}
-            {{ stimulus_action(gnd.search, 'finishedBatchRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.search, 'invalidSearch', gnd.app ~ ':invalidSearch@window') }}
+            {{ stimulus_action(gnd.search, 'finishedBatchRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.search, 'invalidSearch', gnd.app ~ ':invalidSearch@window')|stimulus_action(gnd.search, 'appInitialized', 'efi-gnd-global:appInitialized@window') }}
         >
             <form action="{{ app_config.api.metadata }}" {{ stimulus_action(gnd.search, 'submit', 'submit') }} class="needs-validation">
                 {% if app_config.sequence.requestedVersion != 'uniprot' %}
@@ -43,7 +40,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-sm btn-light" {{ stimulus_target(gnd.search, 'submitButton') }}>Search</button>
+                    <button type="submit" class="btn btn-sm btn-light" {{ stimulus_target(gnd.search, 'submitButton') }} >Search</button>
                 </div>
             </form>
         </div>
@@ -54,8 +51,9 @@
     <h4><i class="bi bi-funnel-fill"></i> Filtering</h4>
     <div id="gnd-filter-container"
         {{ stimulus_controller(gnd.filter) }}
-        data-{{ filter_name }}-svg-canvas-id-value="{{ gnd.svg_canvas_container_id }}"
-        {{ stimulus_action(gnd.filter, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(gnd.filter, 'finishRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.filter, 'initializeUi', gnd.app ~ ':initializeApp@window')|stimulus_action(gnd.filter, 'newDiagrams', gnd.app ~ ':newDiagrams@window') }}
+        data-{{ gnd.filter_id }}-svg-canvas-element-id-value="{{ gnd.svg_canvas_container_id }}"
+        data-{{ gnd.filter_id }}-svg-canvas-controller-id-value="{{ gnd.canvas_id }}"
+        {{ stimulus_action(gnd.filter, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(gnd.filter, 'finishRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.filter, 'initializeUi', gnd.app ~ ':searchCompleted@window')|stimulus_action(gnd.filter, 'newDiagrams', gnd.app ~ ':newDiagrams@window') }}
     >
         <fieldset {{ stimulus_target(gnd.filter, 'fieldset') }}>
             <div>
@@ -107,7 +105,6 @@
     <h4><i class="bi bi-arrows-fullscreen"></i> Genome Window</h4>
     <div id="{{ gnd.gene_window_container_id }}"
         {{ stimulus_controller(gnd.window) }}
-        {{ stimulus_action(gnd.window, 'initializeApp', gnd.app ~ ':initializeApp@window') }}
     >
         <div class="my-1">
             Window size: <select class="w-auto mx-2" id="gnd-window-size"
@@ -117,22 +114,6 @@
             </select> genes
             <i class="bi bi-info-circle" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="The number of genes to display on either side of the query gene"></i>
         </div>
-        {#
-        <div class="my-2">
-            <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (large)"
-                {{ stimulus_target(gnd.window, 'zoomOutLarge') }}
-                {{ stimulus_action(gnd.window, 'zoomOutLarge', 'click') }}><i class="bi bi-zoom-out"></i></button>
-            <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom out (small)"
-                {{ stimulus_target(gnd.window, 'zoomOutSmall') }}
-                {{ stimulus_action(gnd.window, 'zoomOutSmall', 'click') }}><i class="bi bi-zoom-out"></i></buttn)>
-            <button type="button" class="btn btn-light btn-sm" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (small)"
-                {{ stimulus_target(gnd.window, 'zoomInSmall') }}
-                {{ stimulus_action(gnd.window, 'zoomInSmall', 'click') }}><i class="bi bi-zoom-in"></i></button>
-            <button type="button" class="btn btn-light" data-controller="tooltip" data-bs-toggle="tooltip" data-placement="top" title="Zoom in (large)"
-                {{ stimulus_target(gnd.window, 'zoomInLarge') }}
-                {{ stimulus_action(gnd.window, 'zoomInLarge', 'click') }}><i class="bi bi-zoom-in"></i></button>
-        </div>
-        #}
         <div class="my-2 lh-1">
             <small>Use of any of these inputs will cause the page to reload.</small>
         </div>
@@ -143,9 +124,10 @@
         <div class="my-1"
             {{ stimulus_controller(gnd.export_tool) }}
             {{ stimulus_action(gnd.export_tool, 'enableTool', gnd.app ~ ':finishedBatchRetrieval@window') }}
-            data-{{ export_svg_name }}-main-app-id-value="{{ gnd.main_app_container_id }}"
-            data-{{ export_svg_name }}-svg-canvas-id-value="{{ gnd.svg_canvas_container_id }}"
-            data-{{ export_svg_name }}-gnd-name-value="{{ app_config.jobName }}"
+            data-{{ gnd.export_tool_id }}-main-app-element-id-value="{{ gnd.main_app_container_id }}"
+            data-{{ gnd.export_tool_id }}-main-app-controller-id-value="{{ gnd.app_id }}"
+            data-{{ gnd.export_tool_id }}-svg-canvas-element-id-value="{{ gnd.svg_canvas_container_id }}"
+            data-{{ gnd.export_tool_id }}-gnd-name-value="{{ app_config.jobName }}"
         >
             <div class="my-1">
                 <button type="button" class="btn btn-light w-100 text-start"
@@ -161,7 +143,7 @@
                 <button type="button" class="btn btn-light w-100 text-start"
                     {{ stimulus_target(gnd.export_tool, 'geneGraphicsButton') }}
                     {{ stimulus_action(gnd.export_tool, 'downloadGeneGraphics') }}
-                    data-{{ export_svg_name }}-gene-graphics-url-value="{{ app_config.api.geneGraphics }}"
+                    data-{{ gnd.export_tool_id }}-gene-graphics-url-value="{{ app_config.api.geneGraphics }}"
                     disabled
                 >
                     <i class="bi bi-diagram-2"></i> Export to Gene Graphics

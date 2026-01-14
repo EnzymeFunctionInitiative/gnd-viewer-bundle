@@ -1,6 +1,4 @@
 
-{% set canvas_name = gnd.canvas|replace({'/': '--', '_': '-'}) %}
-
 <main class="main-content bg-white">
     <div id="error-overlay" class="d-none">
         <i class="bi bi-exclamation-triangle-fill"></i>
@@ -10,8 +8,9 @@
         <svg width="100%" height="400" preserveAspectRation="xMinYMin"
             id="{{ gnd.svg_canvas_container_id }}"
             {{ stimulus_controller(gnd.canvas) }}
-            data-{{ canvas_name }}-main-app-id-value="{{ gnd.main_app_container_id }}"
-            {{ stimulus_action(gnd.canvas, 'initializeCanvas', gnd.app ~ ':initializeApp@window')|stimulus_action(gnd.canvas, 'renderBatch', gnd.app ~ ':newDiagrams@window')|stimulus_action(gnd.canvas, 'finalizeRender', gnd.app ~ ':finishedBatchRetrieval@window') }}
+            data-{{ gnd.canvas_id }}-main-app-element-id-value="{{ gnd.main_app_container_id }}"
+            data-{{ gnd.canvas_id }}-main-app-controller-id-value="{{ gnd.app_id }}"
+            {{ stimulus_action(gnd.canvas, 'initializeCanvas', gnd.app ~ ':searchCompleted@window')|stimulus_action(gnd.canvas, 'renderBatch', gnd.app ~ ':newDiagrams@window')|stimulus_action(gnd.canvas, 'finalizeRender', gnd.app ~ ':finishedBatchRetrieval@window') }}
         >
         </svg>
     </div>

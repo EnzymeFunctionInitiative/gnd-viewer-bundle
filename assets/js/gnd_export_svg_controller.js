@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import Constants from './gnd/constants.js';
 import Util from './gnd/util.js';
 
 export default class extends Controller {
@@ -10,35 +11,35 @@ export default class extends Controller {
     static values = {
         geneGraphicsUrl: String,
         gndName: String,
-        mainAppId: String,
-        svgCanvasId: String,
+        mainAppElementId: String,
+        mainAppControllerId: String,
+        svgCanvasElementId: String,
     };
-
-    UNIREF_CONTROLS_GROUP = '#svg-canvas-uniref-controls-group';
 
     connect() {
         setTimeout(() => {
             this.initializeOutlets();
         }, 0);
+        Util.signalReady(this);
     }
 
     initializeOutlets() {
         this.mainAppOutlet = Util.findController(
             this.application,
-            this.mainAppIdValue,
-            'enzymefunctioninitiative--gnd-viewer-bundle--gnd-app'
+            this.mainAppElementIdValue,
+            this.mainAppControllerIdValue,
         );
     }
 
     downloadSvg(event) {
         event.preventDefault();
 
-        const svgElement = document.getElementById(this.svgCanvasIdValue);
+        const svgElement = document.getElementById(this.svgCanvasElementIdValue);
 
         // Clone the SVG element so we can remove UniRef controls
         const clone = svgElement.cloneNode(true);
 
-        const unirefGroup = clone.querySelector(this.UNIREF_CONTROLS_GROUP);
+        const unirefGroup = clone.querySelector('#' + Constants.UNIREF_CONTROLS_GROUP);
         if (unirefGroup) {
             unirefGroup.remove();
         }

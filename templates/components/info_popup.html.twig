@@ -1,31 +1,20 @@
 
-{% set infoPopup = 'enzymefunctioninitiative/gnd-viewer-bundle/gnd-info-popup' %}
-{% set popup_name = infoPopup|replace({'/': '--', '_': '-'}) %}
+{% set info_popup = info_popup_controller|default('enzymefunctioninitiative/gnd-viewer-bundle/gnd-info-popup') %}
+{% set open_uniprot_url = uniprot_url|default('https://www.uniprot.org/uniprotkb/<ID>/entry') %}
 
 <div class="position-absolute p-0 border border-secondary rounded border-2 bg-light d-none info-popup"
-    {{ stimulus_controller(infoPopup, {
+    {{ stimulus_controller(info_popup, {
         'metadata-url':  metadata_url|default(""),
-        'canvas-id': svg_canvas_container_id|default("")
+        'canvas-id': svg_canvas_container_id|default(""),
+        'uniprot-url': open_uniprot_url
     }) }}
-    {{ stimulus_action(infoPopup, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(infoPopup, 'handleArrowOver', 'efi-gnd-global:arrowMouseOver@window')|stimulus_action(infoPopup, 'handleArrowOut', 'efi-gnd-global:arrowMouseOut@window') }}
+    {{ stimulus_action(info_popup, 'handleArrowClick', 'efi-gnd-global:arrowClick@window')|stimulus_action(info_popup, 'handleArrowOver', 'efi-gnd-global:arrowMouseOver@window')|stimulus_action(info_popup, 'handleArrowOut', 'efi-gnd-global:arrowMouseOut@window') }}
 >
     <div class="d-flex align-items-center border-bottom">
-        <span class="px-2 py-1 mr-5" {{ stimulus_target(infoPopup, 'idDisplay') }}></span>
+        <span class="px-2 py-1">UniProt ID:</span> <b><span class="px-2 py-1 mr-5" {{ stimulus_target(info_popup, 'idDisplay') }}></span></b>
         <div class="d-flex ms-auto">
-            {% if show_metadata_button|default(true) %}
-                <button
-                        {{ stimulus_action(infoPopup, 'openMetadataPage', 'click') }}
-                        class="btn btn-link border-0"
-                        aria-label="Metadata Tool"
-                        data-controller="tooltip"
-                        data-bs-toggle="tooltip"
-                        data-placement="top"
-                        title="View metadata">
-                    <i class="bi bi-box-arrow-up-right"></i>
-                </button>
-            {% endif %}
             <button
-                    {{ stimulus_action(infoPopup, 'copyToClipboard', 'click') }}
+                    {{ stimulus_action(info_popup, 'copyToClipboard', 'click') }}
                     class="btn btn-link border-0"
                     aria-label="Copy to clipboard"
                     data-controller="tooltip"
@@ -37,18 +26,46 @@
         </div>
     </div>
     <div class="p-2">
-        <div>Description: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'description') }}></span></div>
-        <div>Annotation Status: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'status') }}></span></div>
-        <div>Organism: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'organism') }}></span></div>
+        <div>Description: <span class="info-popup-value" {{ stimulus_target(info_popup, 'description') }}></span></div>
+        <div>Annotation Status: <span class="info-popup-value" {{ stimulus_target(info_popup, 'status') }}></span></div>
+        <div>Organism: <span class="info-popup-value" {{ stimulus_target(info_popup, 'organism') }}></span></div>
         <div class="info-popup-group">
             <div class=""><b>Pfam</b></div>
-            <div><span class="info-popup-value" {{ stimulus_target(infoPopup, 'pfam') }}></span></div>
+            <div><span class="info-popup-value" {{ stimulus_target(info_popup, 'pfam') }}></span></div>
         </div>
-        <div class="info-popup-group" {{ stimulus_target(infoPopup, 'interproGroup') }}>
+        <div class="info-popup-group" {{ stimulus_target(info_popup, 'interproGroup') }}>
             <div class=""><b>InterPro</b></div>
-            <div><span class="info-popup-value" {{ stimulus_target(infoPopup, 'interpro') }}></span></div>
+            <div><span class="info-popup-value" {{ stimulus_target(info_popup, 'interpro') }}></span></div>
         </div>
-        <div class="info-popup-group">Sequence Length: <span class="info-popup-value" {{ stimulus_target(infoPopup, 'length') }}></span></div>
+        <div class="info-popup-group">Sequence Length: <span class="info-popup-value" {{ stimulus_target(info_popup, 'length') }}></span></div>
+        <div class="info-popup-group my-1">
+            {% if show_metadata_button|default(true) %}
+                <button type="button"
+                        {{ stimulus_action(info_popup, 'openMetadataPage', 'click') }}
+                        class="btn btn-primary btn-sm"
+                        aria-label="Link to Sequence Metadata Viewer"
+                        data-controller="tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-trigger="hover"
+                        data-bs-placement="top"
+                        title="View Sequence Metadata"
+                >
+                    View Sequence Metadata
+                </button>
+                <button type="button"
+                        {{ stimulus_action(info_popup, 'openUniProtPage', 'click') }}
+                        class="btn btn-primary btn-sm"
+                        aria-label="Link to UniProt Page"
+                        data-controller="tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-trigger="hover"
+                        data-bs-placement="top"
+                        title="Open UniProt Page"
+                >
+                    Open UniProt Page
+                </button>
+            {% endif %}
+        </div>
     </div>
 </div>
 
