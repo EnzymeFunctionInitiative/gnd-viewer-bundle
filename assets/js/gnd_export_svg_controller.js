@@ -106,7 +106,7 @@ export default class extends Controller {
 
     getStyleRules() {
         return `
-    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+    text { font-size: 14px; font-family: Arial; }
     .highlighted { stroke: #000; stroke-width: 3; }
     .diagram-title { font-size: 14px; }
 `;
