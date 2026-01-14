@@ -227,7 +227,6 @@ export default class GndAppController extends Controller {
      * Wired from viewer.html.twig
      */
     async loadFromSearch({ detail: { query, sequenceVersion } }) {
-        console.log('load from search');
         // If we are doing a brand new search initiated by the search form, then reset the batch size
         this.numBatchesRetrieved = 0;
 

@@ -6,6 +6,7 @@ export default class GndSearchFormController extends Controller {
 
     connect() {
         this.enableUnirefToggleEvents = false;
+        this.disableButton();
 
         const radioButtons = document.querySelectorAll('input[name="uniref-toggle"]');
 
@@ -24,7 +25,7 @@ export default class GndSearchFormController extends Controller {
 
     appInitialized({ detail: { initialized } }) {
         if (initialized) {
-            this.submitButtonTarget.disabled = false;
+            this.enableButton();
         }
     }
 
@@ -47,7 +48,7 @@ export default class GndSearchFormController extends Controller {
     submit(event) {
         // Prevent form from normal HTML submission
         event.preventDefault();
-        this.submitButtonTarget.disabled = true;
+        this.disableButton();
 
         this.searchAlertTarget.classList.add('d-none');
 
@@ -71,14 +72,24 @@ export default class GndSearchFormController extends Controller {
      */
     invalidSearch() {
         this.searchAlertTarget.classList.remove('d-none');
-        this.submitButtonTarget.disabled = false;
+        this.enableButton();
     }
 
     /**
      * Event from gnd-app
      */
     finishedBatchRetrieval() {
+        this.enableButton();
+    }
+
+    disableButton() {
+        this.submitButtonTarget.disabled = true;
+        this.submitButtonTarget.classList.add("disabled");
+    }
+
+    enableButton() {
         this.submitButtonTarget.disabled = false;
+        this.submitButtonTarget.classList.remove("disabled");
     }
 }
 

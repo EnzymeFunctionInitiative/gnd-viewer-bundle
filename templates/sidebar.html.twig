@@ -8,7 +8,10 @@
             {{ stimulus_controller(gnd.search) }}
             {{ stimulus_action(gnd.search, 'finishedBatchRetrieval', gnd.app ~ ':finishedBatchRetrieval@window')|stimulus_action(gnd.search, 'invalidSearch', gnd.app ~ ':invalidSearch@window')|stimulus_action(gnd.search, 'appInitialized', 'efi-gnd-global:appInitialized@window') }}
         >
-            <form action="{{ app_config.api.metadata }}" {{ stimulus_action(gnd.search, 'submit', 'submit') }} class="needs-validation">
+            <form action="javascript:void(0);" class="needs-validation"
+                data-{{ gnd.search_id }}-destination="{{ app_config.api.metadata }}"
+                {{ stimulus_action(gnd.search, 'submit', 'submit') }}
+            >
                 {% if app_config.sequence.requestedVersion != 'uniprot' %}
                     <fieldset>
                         <div class="mb-1">
@@ -40,7 +43,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-sm btn-light" {{ stimulus_target(gnd.search, 'submitButton') }} >Search</button>
+                    <button type="submit" class="btn btn-sm btn-light" {{ stimulus_target(gnd.search, 'submitButton') }} disabled>Search</button>
                 </div>
             </form>
         </div>
