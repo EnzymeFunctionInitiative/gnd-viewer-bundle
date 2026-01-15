@@ -71,10 +71,6 @@ export default class GndAppController extends Controller {
         this.config = this.parseOptions(this.appConfigValue);
 
         this.readyControllers = new Set();
-
-        setTimeout(() => {
-            this.initializeOutlets();
-        }, 1);
     }
 
     /**
@@ -155,6 +151,7 @@ export default class GndAppController extends Controller {
     updateAppState() {
         const isReady = this.requiredControllersValue.every(name => this.readyControllers.has(name));
         if (isReady) {
+            this.initializeOutlets();
             this.checkForImmediateSearch();
             this.dispatch('appInitialized', { detail: { initialized: true }, prefix: 'efi-gnd-global' });
         }
